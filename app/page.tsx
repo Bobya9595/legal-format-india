@@ -1,125 +1,49 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-blue-700 mb-4">
-          Legal Format India
-        </h1>
+    <main className="bg-gray-50 min-h-screen">
 
-        <p className="text-gray-700 mb-10">
-          Generate professional legal documents online for free. Download
-          instantly as PDF.
+      {/* Hero Section */}
+      <section className="max-w-6xl mx-auto px-6 py-20 text-center">
+        <h1 className="text-5xl font-bold text-blue-700 mb-6">
+          Free Legal Document Generator for India
+        </h1>
+        <p className="text-lg text-gray-600 mb-8">
+          Create professional legal documents instantly. Download ready-to-use PDFs for rent agreements, affidavits, salary certificates, resignation letters and more.
         </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Rent Agreement */}
-          <Link
-            href="/rent-agreement-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Rent Agreement Format
-            </h2>
-            <p className="text-gray-600">
-              Create and download rent agreement instantly.
-            </p>
+        <div className="flex justify-center gap-4">
+          <Link href="/rent-agreement" className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+            Get Started
           </Link>
 
-          {/* Affidavit */}
-          <Link
-            href="/affidavit-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">Affidavit Format</h2>
-            <p className="text-gray-600">Generate affidavit document easily.</p>
-          </Link>
-
-          {/* Salary Certificate */}
-          <Link
-            href="/salary-certificate-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Salary Certificate Format
-            </h2>
-            <p className="text-gray-600">
-              Generate professional salary certificate.
-            </p>
-          </Link>
-
-          {/* Experience Letter */}
-          <Link
-            href="/experience-letter-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Experience Letter Format
-            </h2>
-            <p className="text-gray-600">Create experience letter instantly.</p>
-          </Link>
-
-          {/* NOC Letter */}
-          <Link
-            href="/noc-letter-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">NOC Letter Format</h2>
-            <p className="text-gray-600">
-              Generate No Objection Certificate easily.
-            </p>
-          </Link>
-
-          {/* Leave & License */}
-          <Link
-            href="/leave-license-agreement-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Leave & License Agreement
-            </h2>
-            <p className="text-gray-600">
-              Create Leave & License agreement online.
-            </p>
-          </Link>
-
-          {/* Offer Letter */}
-          <Link
-            href="/offer-letter-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">Offer Letter Format</h2>
-            <p className="text-gray-600">Generate professional offer letter.</p>
-          </Link>
-
-          {/* Resignation Letter */}
-          <Link
-            href="/resignation-letter-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Resignation Letter Format
-            </h2>
-            <p className="text-gray-600">
-              Create resignation letter instantly.
-            </p>
-          </Link>
-
-          <Link
-            href="/relieving-letter-format"
-            className="bg-white shadow-md p-6 rounded-lg hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold mb-2">
-              Relieving Letter Format
-            </h2>
-            <p className="text-gray-600">
-              Generate professional relieving letter instantly.
-            </p>
+          <Link href="/all-tools" className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50">
+            View All Tools
           </Link>
         </div>
-      </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-white py-16">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center">
+          <div>
+            <h3 className="text-xl font-semibold mb-2">Instant PDF Download</h3>
+            <p className="text-gray-600">Generate and download documents in seconds.</p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-2">100% Free</h3>
+            <p className="text-gray-600">No signup required. No hidden charges.</p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-2">Made for India</h3>
+            <p className="text-gray-600">Documents formatted according to Indian standards.</p>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 }
-
