@@ -1,60 +1,41 @@
-export const dynamic = "force-dynamic";
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function POST(req: Request) {
   try {
     const { text } = await req.json();
 
     if (!text) {
-      return Response.json(
-        { error: "No agreement text provided." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No text provided" }, { status: 400 });
     }
 
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a legal expert in Indian rental agreements. Improve the legal language, make it professional, structured, and more legally sound while keeping original meaning.",
         },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a professional Indian legal drafting assistant. Improve this rent agreement to a 2026 India-standard format. Add strong clauses including jurisdiction, indemnity, maintenance, inspection rights, dispute resolution, termination protection, force majeure, and governing law. Keep all provided details intact and enhance professionalism.",
-            },
-            {
-              role: "user",
-              content: text,
-            },
-          ],
-          temperature: 0.4,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      return Response.json(
-        { error: "OpenAI API request failed." },
-        { status: 500 }
-      );
-    }
-
-    const data = await response.json();
-
-    const improvedText =
-      data.choices?.[0]?.message?.content || "AI failed to enhance text.";
-
-    return Response.json({
-      result: improvedText,
+        {
+          role: "user",
+          content: text,
+        },
+      ],
+      temperature: 0.7,
     });
-  } catch (error) {
-    return Response.json(
-      { error: "Server error during AI enhancement." },
+
+    return NextResponse.json({
+      result: completion.choices[0].message.content,
+    });
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "AI enhancement failed" },
       { status: 500 }
     );
   }
