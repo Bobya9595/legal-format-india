@@ -2,9 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "LegalFormat – AI Rent Agreement Compliance Auditor",
+  title: "LegalFormat - AI Rent Agreement Auditor",
   description:
-    "Analyze your rent agreement for legal risks and compliance gaps in India.",
+    "AI-powered Indian rent agreement compliance checker. Detect legal risks instantly.",
 };
 
 export default function RootLayout({
