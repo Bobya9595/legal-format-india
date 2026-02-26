@@ -1,150 +1,76 @@
-"use client";
+const generateAgreement = () => {
+  const today = new Date().toLocaleDateString("en-IN");
 
-import { useState } from "react";
-import { jsPDF } from "jspdf";
-
-export default function RentAgreement() {
-  const [landlord, setLandlord] = useState("");
-  const [tenant, setTenant] = useState("");
-  const [property, setProperty] = useState("");
-  const [rent, setRent] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [duration, setDuration] = useState("");
-  const [agreementText, setAgreementText] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const generateAgreement = () => {
-    const text = `
+  const agreement = `
 RENT AGREEMENT
 
-This Rent Agreement is made between ${landlord} (Landlord) and ${tenant} (Tenant).
+THIS RENT AGREEMENT is made and executed on ${today} at ${city}.
 
-Property Address: ${property}
+BETWEEN
 
-Monthly Rent: ₹${rent}
+Mr./Ms. ${landlordName}, residing at ${landlordAddress}, hereinafter referred to as the "LANDLORD" (which expression shall mean and include his/her heirs, successors and assigns);
 
-Security Deposit: ₹${deposit}
+AND
 
-Duration: ${duration} months
+Mr./Ms. ${tenantName}, residing at ${tenantAddress}, hereinafter referred to as the "TENANT" (which expression shall mean and include his/her heirs, successors and assigns).
 
-The Tenant agrees to pay the monthly rent on time and maintain the property in good condition.
+WHEREAS:
+
+1. The Landlord is the absolute owner of the property situated at:
+   ${propertyAddress} (hereinafter referred to as the "Demised Premises").
+
+2. The Tenant has requested to take the said premises on rent for ${useType} purposes.
+
+NOW THIS AGREEMENT WITNESSETH AS FOLLOWS:
+
+1. TERM:
+   The tenancy shall commence for a period of ${duration} months.
+
+2. RENT:
+   The Tenant agrees to pay a monthly rent of ₹${rentAmount}, payable on or before the ${rentDueDate} day of each month.
+
+3. SECURITY DEPOSIT:
+   The Tenant has paid a refundable security deposit of ₹${securityDeposit}.
+
+4. LOCK-IN PERIOD:
+   The lock-in period shall be ${lockInPeriod} months.
+
+5. MAINTENANCE:
+   ${maintenanceClause}
+
+6. UTILITIES:
+   ${utilitiesClause}
+
+7. USE OF PREMISES:
+   The premises shall be used strictly for ${useType} purposes only.
+
+8. NOTICE PERIOD:
+   Either party may terminate this agreement by giving ${noticePeriod} days written notice.
+
+9. SUB-LETTING:
+   The Tenant shall not sub-let the premises without prior written consent of the Landlord.
+
+10. JURISDICTION:
+   This agreement shall be governed by the laws of India and subject to the jurisdiction of courts at ${city}.
+
+IN WITNESS WHEREOF both parties have signed this agreement on the date mentioned above.
+
+----------------------------
+
+LANDLORD SIGNATURE
+
+----------------------------
+
+TENANT SIGNATURE
+
+----------------------------
+
+WITNESS 1
+
+----------------------------
+
+WITNESS 2
 `;
 
-    setAgreementText(text);
-  };
-
-  const enhanceWithAI = async () => {
-    try {
-      setLoading(true);
-
-      const res = await fetch("/api/improve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: agreementText }),
-      });
-
-      const data = await res.json();
-
-      if (data.result) {
-        setAgreementText(data.result);
-      } else {
-        alert("AI failed to respond");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.setFont("Times", "Normal");
-    doc.setFontSize(12);
-
-    const lines = doc.splitTextToSize(agreementText, 180);
-    doc.text(lines, 15, 20);
-
-    doc.save("Rent_Agreement.pdf");
-  };
-
-  return (
-    <div className="p-10 max-w-4xl mx-auto space-y-4">
-      <h1 className="text-3xl font-bold">AI Rent Agreement Generator</h1>
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Landlord Name"
-        value={landlord}
-        onChange={(e) => setLandlord(e.target.value)}
-      />
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Tenant Name"
-        value={tenant}
-        onChange={(e) => setTenant(e.target.value)}
-      />
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Property Address"
-        value={property}
-        onChange={(e) => setProperty(e.target.value)}
-      />
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Monthly Rent"
-        value={rent}
-        onChange={(e) => setRent(e.target.value)}
-      />
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Security Deposit"
-        value={deposit}
-        onChange={(e) => setDeposit(e.target.value)}
-      />
-
-      <input
-        className="border p-2 w-full"
-        placeholder="Duration (in months)"
-        value={duration}
-        onChange={(e) => setDuration(e.target.value)}
-      />
-
-      <div className="flex gap-4">
-        <button
-          onClick={generateAgreement}
-          className="bg-blue-600 text-white px-4 py-2"
-        >
-          Generate Agreement
-        </button>
-
-        <button
-          onClick={enhanceWithAI}
-          className="bg-green-600 text-white px-4 py-2"
-        >
-          {loading ? "Enhancing..." : "Enhance with AI"}
-        </button>
-
-        <button
-          onClick={downloadPDF}
-          className="bg-black text-white px-4 py-2"
-        >
-          Download PDF
-        </button>
-      </div>
-
-      <textarea
-        className="border p-4 w-full h-96"
-        value={agreementText}
-        onChange={(e) => setAgreementText(e.target.value)}
-      />
-    </div>
-  );
-}
+  setAgreementText(agreement);
+};
