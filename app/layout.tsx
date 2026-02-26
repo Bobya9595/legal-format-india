@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r p-6 space-y-8 hidden md:block">
-        <h2 className="text-xl font-bold">LegalFormat</h2>
+        <h2 className="text-xl font-bold"></h2>
 
         <nav className="space-y-4 text-gray-600">
           <Link href="/dashboard" className="block hover:text-black">
