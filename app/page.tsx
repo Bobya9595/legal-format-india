@@ -1,13 +1,9 @@
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900 overflow-hidden">
-
-      {/* Background Gradient Blobs */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute top-60 -right-40 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
 
       {/* NAVBAR */}
-      <header className="relative z-10 flex justify-between items-center px-10 py-6 max-w-7xl mx-auto">
+      <header className="flex justify-between items-center px-10 py-6 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold tracking-tight">
           LegalFormat
         </h1>
@@ -27,7 +23,7 @@ export default function Home() {
       </header>
 
       {/* HERO */}
-      <section className="relative z-10 text-center px-6 py-32 max-w-5xl mx-auto space-y-8">
+      <section className="text-center px-6 py-24 max-w-5xl mx-auto space-y-8">
 
         <div className="inline-block px-4 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
           AI Legal Compliance SaaS
@@ -48,7 +44,7 @@ export default function Home() {
         <div className="flex justify-center gap-4 pt-4">
           <a
             href="/rent-agreement-auditor"
-            className="bg-black text-white px-8 py-4 rounded-xl text-lg shadow-xl hover:scale-105 transition duration-300"
+            className="bg-black text-white px-8 py-4 rounded-xl text-lg shadow hover:scale-105 transition duration-300"
           >
             Analyze Agreement
           </a>
@@ -67,7 +63,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="relative z-10 px-6 py-24 max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
+      <section className="px-6 py-20 max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
         <FeatureCard
           title="Instant Risk Score"
           description="Structured compliance score with severity breakdown."
@@ -82,29 +78,14 @@ export default function Home() {
         />
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="relative z-10 px-6 py-32 bg-white">
-        <div className="max-w-6xl mx-auto text-center space-y-16">
-          <h3 className="text-4xl font-semibold">
-            How It Works
-          </h3>
-
-          <div className="grid md:grid-cols-3 gap-12">
-            <StepCard number="01" title="Paste Agreement" />
-            <StepCard number="02" title="AI Compliance Scan" />
-            <StepCard number="03" title="Download Report" />
-          </div>
-        </div>
-      </section>
-
       {/* PRICING */}
-      <section id="pricing" className="relative z-10 px-6 py-32 bg-gray-50">
-        <div className="max-w-xl mx-auto text-center space-y-12">
+      <section id="pricing" className="px-6 py-24 bg-gray-50">
+        <div className="max-w-xl mx-auto text-center space-y-10">
           <h3 className="text-4xl font-semibold">
             Simple Pricing
           </h3>
 
-          <div className="bg-white rounded-3xl shadow-2xl p-12 border hover:shadow-3xl transition duration-300">
+          <div className="bg-white rounded-2xl shadow-lg p-10 border hover:shadow-xl transition duration-300">
             <p className="text-lg font-semibold">Pro Plan</p>
 
             <p className="text-5xl font-bold mt-4">
@@ -114,7 +95,7 @@ export default function Home() {
               </span>
             </p>
 
-            <ul className="space-y-3 text-gray-600 mt-6">
+            <ul className="space-y-2 text-gray-600 mt-6">
               <li>Unlimited Agreement Analysis</li>
               <li>Full Compliance Report PDF</li>
               <li>AI Corrected Agreement</li>
@@ -132,7 +113,7 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="relative z-10 text-center py-12 text-gray-500 text-sm">
+      <footer className="text-center py-10 text-gray-500 text-sm">
         © {new Date().getFullYear()} LegalFormat India. All rights reserved.
       </footer>
 
@@ -142,21 +123,9 @@ export default function Home() {
 
 function FeatureCard({ title, description }: any) {
   return (
-    <div className="bg-white p-8 rounded-3xl shadow-lg border hover:-translate-y-2 hover:shadow-2xl transition duration-300">
+    <div className="bg-white p-8 rounded-2xl shadow-md border hover:-translate-y-1 hover:shadow-xl transition duration-300">
       <h4 className="text-xl font-semibold mb-3">{title}</h4>
       <p className="text-gray-600">{description}</p>
-    </div>
-  );
-}
-
-function StepCard({ number, title }: any) {
-  return (
-    <div className="space-y-4 hover:-translate-y-1 transition duration-300">
-      <div className="text-5xl font-bold text-gray-200">{number}</div>
-      <h4 className="text-xl font-semibold">{title}</h4>
-      <p className="text-gray-600">
-        Secure structured compliance analysis powered by AI.
-      </p>
     </div>
   );
 }
