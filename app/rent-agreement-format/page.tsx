@@ -19,6 +19,7 @@ export default function RentAgreementFormat() {
   });
 
   const [agreementText, setAgreementText] = useState("");
+  const [isProUser] = useState(false); // Set true after payment integration
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,43 +41,53 @@ AND
 
 Mr./Ms. ${form.tenantName}, residing at ${form.tenantAddress}, hereinafter referred to as the "TENANT".
 
-WHEREAS:
+WHEREAS the Landlord is the lawful owner of the property situated at:
+${form.propertyAddress} (hereinafter referred to as the "Demised Premises");
 
-1. The Landlord is the absolute owner of the property situated at:
-   ${form.propertyAddress} (hereinafter referred to as the "Demised Premises").
-
-2. The Tenant has approached the Landlord to take the premises on rent for residential purposes.
+AND WHEREAS the Tenant has requested to take the premises on rent for residential purposes.
 
 NOW THIS AGREEMENT WITNESSETH AS FOLLOWS:
 
-1. TERM:
-   The tenancy shall commence from ${form.startDate} and shall remain valid for ${form.duration} months.
+1. TERM
+The tenancy shall commence from ${form.startDate} and continue for ${form.duration} months.
 
-2. RENT:
-   The Tenant agrees to pay a monthly rent of ₹${form.rent} payable on or before the 5th day of each month.
+2. RENT
+The Tenant agrees to pay a monthly rent of ₹${form.rent} payable on or before the 5th day of each month.
 
-3. SECURITY DEPOSIT:
-   The Tenant has paid a refundable security deposit of ₹${form.deposit}.
+3. SECURITY DEPOSIT
+The Tenant has paid a refundable security deposit of ₹${form.deposit}.
 
-4. USE OF PREMISES:
-   The premises shall be used strictly for residential purposes only.
+4. USE OF PREMISES
+The premises shall be used strictly for residential purposes only.
 
-5. MAINTENANCE:
-   The Tenant shall maintain the premises in good and tenantable condition.
+5. MAINTENANCE & DAMAGES
+The Tenant shall maintain the premises in good condition and compensate for any damage beyond normal wear and tear.
 
-6. UTILITIES:
-   Electricity, water, gas and other utility charges shall be borne by the Tenant.
+6. UTILITIES
+All electricity, water, gas, internet and other utility charges shall be borne by the Tenant.
 
-7. TERMINATION:
-   Either party may terminate this agreement by giving ${form.noticePeriod} days prior written notice.
+7. INSPECTION RIGHTS
+The Landlord may inspect the premises with prior notice.
 
-8. SUB-LETTING:
-   The Tenant shall not sub-let the premises without written consent of the Landlord.
+8. SUB-LETTING
+The Tenant shall not sub-let or transfer possession without written consent of the Landlord.
 
-9. JURISDICTION:
-   This agreement shall be governed by the laws of India and subject to the jurisdiction of courts at ${form.city}.
+9. TERMINATION
+Either party may terminate this agreement by giving ${form.noticePeriod} days prior written notice.
 
-IN WITNESS WHEREOF both parties have signed this Agreement on the date mentioned above.
+10. INDEMNITY
+The Tenant agrees to indemnify the Landlord against any loss, damage, or liability arising from misuse of the premises.
+
+11. FORCE MAJEURE
+Neither party shall be liable for failure to perform obligations due to events beyond reasonable control.
+
+12. DISPUTE RESOLUTION
+Any disputes shall be subject to the jurisdiction of courts at ${form.city}.
+
+13. NO TENANCY RIGHTS
+This agreement does not create ownership or permanent tenancy rights in favor of the Tenant.
+
+IN WITNESS WHEREOF the parties have signed this Agreement on the date mentioned above.
 
 -----------------------------
 LANDLORD SIGNATURE
@@ -96,13 +107,36 @@ WITNESS 2
 
   const downloadPDF = () => {
     const doc = new jsPDF();
+
     doc.setFont("Times", "Normal");
     doc.setFontSize(12);
 
-    const lines = doc.splitTextToSize(agreementText, 180);
-    doc.text(lines, 15, 20);
+    const marginLeft = 20;
+    const marginTop = 20;
+    const pageWidth = doc.internal.pageSize.getWidth() - 40;
 
-    doc.save("Rent_Agreement.pdf");
+    const lines = doc.splitTextToSize(agreementText, pageWidth);
+
+    let y = marginTop;
+
+    lines.forEach((line: string) => {
+      if (y > 280) {
+        doc.addPage();
+        y = marginTop;
+      }
+      doc.text(line, marginLeft, y);
+      y += 7;
+    });
+
+    // Watermark for free users
+    if (!isProUser) {
+      doc.setTextColor(220, 220, 220);
+      doc.setFontSize(40);
+      doc.text("LEGALFORMAT.IN", 35, 160, { angle: 45 });
+      doc.setTextColor(0, 0, 0);
+    }
+
+    doc.save("LegalFormat_Rent_Agreement.pdf");
   };
 
   return (
@@ -118,17 +152,17 @@ WITNESS 2
         <input name="city" placeholder="City" className="border p-2" onChange={handleChange} />
         <input name="rent" placeholder="Monthly Rent (₹)" className="border p-2" onChange={handleChange} />
         <input name="deposit" placeholder="Security Deposit (₹)" className="border p-2" onChange={handleChange} />
-        <input name="duration" placeholder="Duration (Months)" className="border p-2" defaultValue="11" onChange={handleChange} />
-        <input name="noticePeriod" placeholder="Notice Period (Days)" className="border p-2" defaultValue="30" onChange={handleChange} />
+        <input name="duration" placeholder="Duration (Months)" defaultValue="11" className="border p-2" onChange={handleChange} />
+        <input name="noticePeriod" placeholder="Notice Period (Days)" defaultValue="30" className="border p-2" onChange={handleChange} />
         <input type="date" name="startDate" className="border p-2 col-span-2" onChange={handleChange} />
       </div>
 
       <div className="flex gap-4">
-        <button onClick={generateAgreement} className="bg-blue-600 text-white px-6 py-2">
+        <button onClick={generateAgreement} className="bg-blue-600 text-white px-6 py-2 rounded">
           Generate Agreement
         </button>
 
-        <button onClick={downloadPDF} className="bg-green-600 text-white px-6 py-2">
+        <button onClick={downloadPDF} className="bg-green-600 text-white px-6 py-2 rounded">
           Download PDF
         </button>
       </div>
