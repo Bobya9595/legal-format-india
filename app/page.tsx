@@ -3,7 +3,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
 
       {/* NAVBAR */}
-      <header className="flex justify-between items-center px-10 py-6 max-w-7xl mx-auto">
+      <header className="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold tracking-tight">
           LegalFormat
         </h1>
@@ -64,18 +64,22 @@ export default function Home() {
 
       {/* FEATURES */}
       <section className="px-6 py-20 max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
+
         <FeatureCard
           title="Instant Risk Score"
           description="Structured compliance score with severity breakdown."
         />
+
         <FeatureCard
           title="Clause Detection"
           description="Detect missing indemnity, lock-in, jurisdiction and termination clauses."
         />
+
         <FeatureCard
           title="State-Aware Checks"
           description="Highlights Maharashtra leave & license and other state compliance gaps."
         />
+
       </section>
 
       {/* PRICING */}
@@ -86,7 +90,9 @@ export default function Home() {
           </h3>
 
           <div className="bg-white rounded-2xl shadow-lg p-10 border hover:shadow-xl transition duration-300">
-            <p className="text-lg font-semibold">Pro Plan</p>
+            <p className="text-lg font-semibold">
+              Pro Plan
+            </p>
 
             <p className="text-5xl font-bold mt-4">
               ₹299
@@ -124,8 +130,12 @@ export default function Home() {
 function FeatureCard({ title, description }: any) {
   return (
     <div className="bg-white p-8 rounded-2xl shadow-md border hover:-translate-y-1 hover:shadow-xl transition duration-300">
-      <h4 className="text-xl font-semibold mb-3">{title}</h4>
-      <p className="text-gray-600">{description}</p>
+      <h4 className="text-xl font-semibold mb-3">
+        {title}
+      </h4>
+      <p className="text-gray-600">
+        {description}
+      </p>
     </div>
   );
 }
