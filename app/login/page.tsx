@@ -3,24 +3,48 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../lib/firebase"; // RELATIVE IMPORT
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      // Reference to Firestore user document
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // If user profile doesn't exist, create it
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          email: user.email,
+          plan: "free",
+          documentCount: 0,
+          aiUsage: 0,
+          createdAt: new Date(),
+        });
+      }
+
       router.push("/dashboard");
+
     } catch (err: any) {
       setError(err.message);
     }
@@ -29,30 +53,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#f4f4f4"
-    }}>
-      <div style={{
-        width: "350px",
-        padding: "30px",
-        background: "white",
-        borderRadius: "8px",
-        boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
-      }}>
-        <h2 style={{ marginBottom: "20px" }}>Login to LegalFormat</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-[350px] p-8 bg-white rounded-xl shadow-lg">
+        <h2 className="text-xl font-bold mb-6">Login to LegalFormat</h2>
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             placeholder="Email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "12px" }}
+            className="w-full p-3 border rounded-lg"
           />
 
           <input
@@ -61,25 +73,17 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "12px" }}
+            className="w-full p-3 border rounded-lg"
           />
 
           {error && (
-            <p style={{ color: "red", fontSize: "14px" }}>{error}</p>
+            <p className="text-red-500 text-sm">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "black",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer"
-            }}
+            className="w-full bg-black text-white p-3 rounded-lg"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
