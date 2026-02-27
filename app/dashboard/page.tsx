@@ -1,95 +1,126 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 
-export default function DashboardPage() {
+export default function Dashboard() {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      if (!u) {
+        router.push("/login");
+      } else {
+        setUser(u);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/login");
+  };
+
   return (
-    <div className="flex-1 min-h-screen bg-[#0c0c12] text-white">
+    <div className="min-h-screen flex bg-gray-100">
 
-      {/* TOP BAR */}
-      <div className="flex justify-between items-center px-10 py-6 border-b border-gray-800">
-        <h2 className="text-2xl font-semibold">Dashboard</h2>
-        <div className="text-sm text-gray-400">
-          Welcome back 👋
+      {/* Sidebar */}
+      <div className="w-64 bg-black text-white p-6 flex flex-col justify-between">
+        <div>
+          <h1 className="text-2xl font-bold mb-10">LegalFormat</h1>
+
+          <nav className="space-y-4">
+            <button className="block w-full text-left hover:text-gray-300">
+              Dashboard
+            </button>
+            <button className="block w-full text-left hover:text-gray-300">
+              My Documents
+            </button>
+            <button className="block w-full text-left hover:text-gray-300">
+              Create Document
+            </button>
+            <button className="block w-full text-left hover:text-gray-300">
+              Settings
+            </button>
+          </nav>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="bg-white text-black py-2 rounded-lg mt-6"
+        >
+          Logout
+        </button>
       </div>
 
-      {/* CONTENT */}
-      <div className="p-10">
+      {/* Main Content */}
+      <div className="flex-1 p-10">
 
-        {/* METRICS */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-
-          <div className="bg-[#16161d] p-6 rounded-2xl border border-gray-800">
-            <h3 className="text-gray-400 mb-3">AI Analyses Used</h3>
-            <div className="text-4xl font-bold text-purple-500">
-              1 / 5
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Upgrade to increase limit
+        {/* Topbar */}
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Welcome back 👋
+            </h2>
+            <p className="text-gray-500">
+              {user?.email}
             </p>
           </div>
 
-          <div className="bg-[#16161d] p-6 rounded-2xl border border-gray-800">
-            <h3 className="text-gray-400 mb-3">Documents Generated</h3>
-            <div className="text-4xl font-bold text-blue-500">
-              3
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Total this month
-            </p>
-          </div>
+          <div className="flex items-center gap-4">
+            <span className="bg-gray-200 px-4 py-1 rounded-full text-sm">
+              Free Plan
+            </span>
 
-          <div className="bg-[#16161d] p-6 rounded-2xl border border-gray-800">
-            <h3 className="text-gray-400 mb-3">Average Risk Score</h3>
-            <div className="text-4xl font-bold text-green-400">
-              78
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Based on analyzed agreements
-            </p>
-          </div>
-
-        </div>
-
-        {/* QUICK ACTIONS */}
-        <div className="mb-12">
-          <h3 className="text-xl font-semibold mb-6">Quick Actions</h3>
-
-          <div className="flex gap-4">
-            <Link
-              href="/generate"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl hover:scale-105 transition"
-            >
-              Generate Document
-            </Link>
-
-            <Link
-              href="/analyze"
-              className="border border-gray-600 px-6 py-3 rounded-xl hover:border-purple-500 transition"
-            >
-              Analyze Agreement
-            </Link>
+            <button className="bg-black text-white px-6 py-2 rounded-lg">
+              Upgrade
+            </button>
           </div>
         </div>
 
-        {/* UPGRADE */}
-        <div className="bg-gradient-to-r from-purple-600/10 to-blue-600/10 border border-purple-500/30 rounded-2xl p-8">
-          <h3 className="text-xl font-semibold mb-3">
-            Unlock Full AI Legal Intelligence
-          </h3>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-6 mb-10">
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-gray-500 text-sm">Documents Created</h3>
+            <p className="text-3xl font-bold mt-2">3</p>
+          </div>
 
-          <p className="text-gray-400 mb-6">
-            Upgrade to Pro for unlimited generation, advanced AI risk analysis,
-            clause recommendations and priority processing.
-          </p>
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-gray-500 text-sm">AI Generations</h3>
+            <p className="text-3xl font-bold mt-2">8</p>
+          </div>
 
-          <Link
-            href="/pricing"
-            className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl hover:scale-105 transition"
-          >
-            Upgrade to Pro
-          </Link>
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-gray-500 text-sm">Current Plan</h3>
+            <p className="text-3xl font-bold mt-2">Free</p>
+          </div>
+        </div>
+
+        {/* Recent Documents */}
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h3 className="text-lg font-semibold mb-4">Recent Documents</h3>
+
+          <div className="space-y-3">
+            <div className="flex justify-between p-3 border rounded-lg">
+              <span>Rent Agreement - Mumbai</span>
+              <span className="text-gray-400 text-sm">2 days ago</span>
+            </div>
+
+            <div className="flex justify-between p-3 border rounded-lg">
+              <span>Affidavit Format</span>
+              <span className="text-gray-400 text-sm">5 days ago</span>
+            </div>
+
+            <div className="flex justify-between p-3 border rounded-lg">
+              <span>Employment Contract</span>
+              <span className="text-gray-400 text-sm">1 week ago</span>
+            </div>
+          </div>
         </div>
 
       </div>
