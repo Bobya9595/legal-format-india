@@ -21,16 +21,24 @@ export default function GeneratePage() {
     setGeneratedDoc(null);
 
     setTimeout(() => {
-      setGeneratedDoc(
-`${docType.toUpperCase()}
+      setGeneratedDoc(`
+${docType.toUpperCase()}
 
 This agreement is made between ${partyOne} and ${partyTwo}.
 
 ${details || "Standard terms and conditions apply."}
 
-This document is generated using AI Legal Intelligence by LegalFormat.
-`
-      );
+1. TERM
+The agreement shall remain valid as mutually agreed between the parties.
+
+2. OBLIGATIONS
+Both parties agree to comply with the terms stated herein.
+
+3. GOVERNING LAW
+This agreement shall be governed by the laws of India.
+
+IN WITNESS WHEREOF, the parties have signed this agreement.
+      `);
       setLoading(false);
     }, 1500);
   };
@@ -39,11 +47,56 @@ This document is generated using AI Legal Intelligence by LegalFormat.
     if (!generatedDoc) return;
 
     const doc = new jsPDF("p", "mm", "a4");
-    doc.setFont("Times", "Roman");
+
+    const marginLeft = 20;
+    let yPosition = 30;
+
+    // Title
+    doc.setFont("Times", "Bold");
+    doc.setFontSize(16);
+    doc.text(docType.toUpperCase(), 105, 20, { align: "center" });
+
+    // Body
+    doc.setFont("Times", "Normal");
     doc.setFontSize(12);
 
-    const lines = doc.splitTextToSize(generatedDoc, 180);
-    doc.text(lines, 15, 20);
+    const bodyText = `
+This agreement is made between ${partyOne} and ${partyTwo}.
+
+${details || "Standard terms and conditions apply."}
+
+1. TERM
+The agreement shall remain valid as mutually agreed between the parties.
+
+2. OBLIGATIONS
+Both parties agree to comply with the terms stated herein.
+
+3. GOVERNING LAW
+This agreement shall be governed by the laws of India.
+
+IN WITNESS WHEREOF, the parties have signed this agreement.
+    `;
+
+    const lines = doc.splitTextToSize(bodyText, 170);
+
+    lines.forEach((line: string) => {
+      if (yPosition > 260) {
+        doc.addPage();
+        yPosition = 20;
+      }
+
+      doc.text(line, marginLeft, yPosition);
+      yPosition += 7;
+    });
+
+    // Signature Section
+    yPosition += 20;
+
+    doc.text("__________________________", marginLeft, yPosition);
+    doc.text("Signature of Party 1", marginLeft, yPosition + 6);
+
+    doc.text("__________________________", 110, yPosition);
+    doc.text("Signature of Party 2", 110, yPosition + 6);
 
     doc.save("LegalFormat-Document.pdf");
   };
@@ -51,7 +104,7 @@ This document is generated using AI Legal Intelligence by LegalFormat.
   return (
     <div className="min-h-screen bg-[#0c0c12] text-white p-10">
 
-      {/* BACK BUTTON */}
+      {/* Back Button */}
       <Link
         href="/dashboard"
         className="text-sm text-gray-400 hover:text-white mb-6 inline-block"
@@ -65,7 +118,7 @@ This document is generated using AI Legal Intelligence by LegalFormat.
 
       <div className="grid md:grid-cols-2 gap-10">
 
-        {/* FORM SECTION */}
+        {/* Form Section */}
         <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800 space-y-6">
 
           <div>
@@ -88,14 +141,14 @@ This document is generated using AI Legal Intelligence by LegalFormat.
             value={partyOne}
             onChange={(e) => setPartyOne(e.target.value)}
             className="w-full bg-[#1a1a23] border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-purple-500"
-            placeholder="Party 1 (e.g. Landlord / Employer)"
+            placeholder="Party 1"
           />
 
           <input
             value={partyTwo}
             onChange={(e) => setPartyTwo(e.target.value)}
             className="w-full bg-[#1a1a23] border border-gray-700 rounded-xl p-3 focus:outline-none focus:border-purple-500"
-            placeholder="Party 2 (e.g. Tenant / Employee)"
+            placeholder="Party 2"
           />
 
           <textarea
@@ -115,7 +168,7 @@ This document is generated using AI Legal Intelligence by LegalFormat.
 
         </div>
 
-        {/* RESULT SECTION */}
+        {/* Result Section */}
         <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800">
 
           <h2 className="text-lg font-semibold mb-4">
