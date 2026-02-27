@@ -11,7 +11,7 @@ export default function AnalyzePage() {
   const [clauses, setClauses] = useState<
     { name: string; status: "valid" | "warning" | "missing" }[]
   >([]);
-  const [improvedDoc, setImprovedDoc] = useState<string>("");
+  const [improvedDoc, setImprovedDoc] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -87,13 +87,13 @@ IMPROVED AGREEMENT DRAFT
 
 This agreement has been enhanced to include:
 
-1. Clear termination clause with notice period.
-2. Defined dispute resolution mechanism.
-3. Proper indemnity protection.
-4. Clearly defined governing jurisdiction.
-5. Improved payment timeline structure.
+1. Clear termination clause with defined notice period.
+2. Proper indemnity clause to reduce liability risk.
+3. Explicit governing jurisdiction.
+4. Structured payment terms.
+5. Dispute resolution mechanism (Arbitration clause).
 
-This draft ensures better legal clarity and reduced risk exposure.
+This draft provides improved legal protection and clarity.
     `;
 
     setImprovedDoc(improvedText);
@@ -115,6 +115,7 @@ This draft ensures better legal clarity and reduced risk exposure.
   return (
     <div className="min-h-screen bg-[#0c0c12] text-white p-10">
 
+      {/* Back Button */}
       <Link
         href="/dashboard"
         className="text-sm text-gray-400 hover:text-white mb-6 inline-block"
@@ -129,18 +130,39 @@ This draft ensures better legal clarity and reduced risk exposure.
       <div className="grid md:grid-cols-2 gap-10">
 
         {/* Upload Section */}
-        <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800">
+        <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800 space-y-6">
 
-          <label className="block text-gray-400 mb-4">
-            Upload Agreement (PDF or DOCX)
-          </label>
+          <div className="border-2 border-dashed border-gray-700 rounded-2xl p-8 text-center bg-[#1a1a23] hover:border-purple-500 transition">
 
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleFileChange}
-            className="mb-6"
-          />
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="hidden"
+              id="fileUpload"
+            />
+
+            <label
+              htmlFor="fileUpload"
+              className="cursor-pointer flex flex-col items-center gap-3"
+            >
+              <div className="text-purple-400 text-4xl">📄</div>
+
+              <p className="text-gray-300 font-medium">
+                Click to upload agreement
+              </p>
+
+              <p className="text-gray-500 text-sm">
+                PDF or DOCX (Max 5MB)
+              </p>
+            </label>
+
+            {fileName && (
+              <div className="mt-4 text-sm text-green-400">
+                ✓ {fileName} selected
+              </div>
+            )}
+          </div>
 
           <button
             onClick={handleAnalyze}
@@ -148,9 +170,10 @@ This draft ensures better legal clarity and reduced risk exposure.
           >
             {loading ? "Analyzing..." : "Analyze Agreement"}
           </button>
+
         </div>
 
-        {/* Results */}
+        {/* Results Section */}
         <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800">
 
           {loading && (
@@ -162,18 +185,35 @@ This draft ensures better legal clarity and reduced risk exposure.
           {!loading && riskScore !== null && (
             <div className="space-y-6">
 
-              <div className="text-4xl font-bold text-purple-500">
-                {riskScore}/100
+              <div>
+                <div className="text-4xl font-bold text-purple-500">
+                  {riskScore}/100
+                </div>
+                <p className="text-gray-400">
+                  {riskScore > 80
+                    ? "Low Risk – Agreement looks strong."
+                    : "Medium Risk – Improvements recommended."}
+                </p>
               </div>
 
+              {/* Clause Detection */}
               <div className="space-y-3">
                 {clauses.map((clause, index) => (
                   <div
                     key={index}
-                    className="flex justify-between bg-[#1a1a23] p-3 rounded-lg"
+                    className="flex justify-between bg-[#1a1a23] p-3 rounded-lg border border-gray-800"
                   >
                     <span>{clause.name}</span>
-                    <span>
+
+                    <span
+                      className={
+                        clause.status === "valid"
+                          ? "text-green-400"
+                          : clause.status === "warning"
+                          ? "text-yellow-400"
+                          : "text-red-400"
+                      }
+                    >
                       {clause.status === "valid"
                         ? "✓"
                         : clause.status === "warning"
@@ -184,24 +224,29 @@ This draft ensures better legal clarity and reduced risk exposure.
                 ))}
               </div>
 
-              <div className="flex gap-4 pt-4">
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4 flex-wrap">
+
                 <button
                   onClick={handleDownloadReport}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl hover:scale-105 transition"
                 >
                   Download Report
                 </button>
 
                 <button
                   onClick={handleImprove}
-                  className="border border-gray-600 px-6 py-3 rounded-xl"
+                  className="border border-gray-600 px-6 py-3 rounded-xl hover:border-purple-500 transition"
                 >
                   Improve My Document
                 </button>
+
               </div>
 
+              {/* Improved Draft */}
               {improvedDoc && (
                 <div className="mt-6 space-y-4">
+
                   <textarea
                     value={improvedDoc}
                     onChange={(e) => setImprovedDoc(e.target.value)}
@@ -211,14 +256,21 @@ This draft ensures better legal clarity and reduced risk exposure.
 
                   <button
                     onClick={handleDownloadImproved}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl"
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl hover:scale-105 transition"
                   >
                     Download Improved Draft
                   </button>
+
                 </div>
               )}
 
             </div>
+          )}
+
+          {!loading && riskScore === null && (
+            <p className="text-gray-500">
+              Upload and analyze a document to see results.
+            </p>
           )}
 
         </div>
