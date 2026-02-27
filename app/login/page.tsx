@@ -3,20 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth } from "../../lib/firebase"; // RELATIVE IMPORT
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -32,16 +32,16 @@ export default function LoginPage() {
     <div style={{
       minHeight: "100vh",
       display: "flex",
-      alignItems: "center",
       justifyContent: "center",
-      background: "#f5f5f5"
+      alignItems: "center",
+      background: "#f4f4f4"
     }}>
       <div style={{
         width: "350px",
         padding: "30px",
         background: "white",
-        borderRadius: "10px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
+        borderRadius: "8px",
+        boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
       }}>
         <h2 style={{ marginBottom: "20px" }}>Login to LegalFormat</h2>
 
@@ -52,7 +52,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+            style={{ width: "100%", padding: "10px", marginBottom: "12px" }}
           />
 
           <input
@@ -61,7 +61,7 @@ export default function LoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+            style={{ width: "100%", padding: "10px", marginBottom: "12px" }}
           />
 
           {error && (
@@ -77,7 +77,7 @@ export default function LoginPage() {
               background: "black",
               color: "white",
               border: "none",
-              borderRadius: "5px",
+              borderRadius: "4px",
               cursor: "pointer"
             }}
           >
