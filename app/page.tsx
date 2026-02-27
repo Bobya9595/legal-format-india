@@ -1,57 +1,102 @@
+"use client";
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-900">
+    <main className="min-h-screen bg-[#0f0f14] text-white">
 
       {/* NAVBAR */}
-      <header className="flex justify-between items-center px-10 py-6 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">LegalFormat</h1>
+      <nav className="flex justify-between items-center px-10 py-6">
+        <h1 className="text-xl font-semibold tracking-wide">
+          <span className="text-white">Legal</span>
+          <span className="text-purple-500">Format</span>
+        </h1>
 
-        <div className="flex items-center gap-6">
-          <a href="#pricing" className="text-gray-600 hover:text-black">
+        <div className="flex gap-6 items-center">
+          <a className="text-gray-300 hover:text-white transition">
             Pricing
           </a>
-          <a
-            href="/rent-agreement-auditor"
-            className="bg-black text-white px-5 py-2 rounded-lg"
-          >
+          <button className="bg-gradient-to-r from-purple-600 to-blue-600 px-5 py-2 rounded-lg shadow-lg hover:scale-105 transition">
             Start Free
-          </a>
+          </button>
         </div>
-      </header>
+      </nav>
 
       {/* HERO */}
-      <section className="text-center px-6 py-32 max-w-5xl mx-auto space-y-8">
-        <h2 className="text-5xl font-bold">
-          Know If Your Rent Agreement Is Legally Safe
-        </h2>
+      <section className="grid md:grid-cols-2 gap-16 items-center px-10 py-20 max-w-7xl mx-auto">
 
-        <p className="text-xl text-gray-600">
-          Detect missing clauses, compliance gaps and legal risks instantly.
-        </p>
+        {/* LEFT SIDE */}
+        <div>
+          <h2 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
+            AI That Audits Your <br />
+            <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Legal Agreements
+            </span>
+          </h2>
 
-        <div className="flex justify-center gap-4 pt-4">
-          <a
-            href="/rent-agreement-auditor"
-            className="bg-black text-white px-8 py-4 rounded-xl"
-          >
-            Analyze Agreement
-          </a>
+          <p className="text-gray-400 text-lg mb-8">
+            Detect missing clauses, compliance risks and legal gaps instantly.
+            Built for Indian agreements.
+          </p>
 
-          <a
-            href="#pricing"
-            className="border border-gray-300 px-8 py-4 rounded-xl"
-          >
-            View Pricing
-          </a>
+          <div className="flex gap-4">
+            <button className="bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.5)] hover:scale-105 transition">
+              Analyze Agreement
+            </button>
+
+            <button className="border border-gray-600 px-8 py-3 rounded-xl hover:border-purple-500 transition">
+              View Pricing
+            </button>
+          </div>
         </div>
-      </section>
 
-      {/* FOOTER */}
-      <footer className="text-center py-12 text-gray-500 text-sm">
-        © {new Date().getFullYear()} LegalFormat India
-      </footer>
+        {/* RIGHT SIDE - AI PREVIEW CARD */}
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 blur-xl opacity-30 rounded-2xl"></div>
+
+          <div className="relative bg-[#181820] border border-gray-800 rounded-2xl p-8 shadow-2xl">
+
+            <h3 className="text-lg font-semibold mb-6 text-gray-300">
+              Agreement Risk Analysis
+            </h3>
+
+            <div className="mb-6">
+              <div className="text-4xl font-bold text-purple-500">
+                82<span className="text-gray-400 text-xl">/100</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Risk Score (Medium Risk)
+              </p>
+            </div>
+
+            <div className="space-y-4 text-sm">
+
+              <div className="flex justify-between">
+                <span className="text-green-400">✓ Rent Clause</span>
+                <span className="text-gray-400">Valid</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-yellow-400">⚠ Termination Clause</span>
+                <span className="text-gray-400">Missing</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-red-400">✖ Stamp Duty Clause</span>
+                <span className="text-gray-400">Not Mentioned</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-green-400">✓ Dispute Resolution</span>
+                <span className="text-gray-400">Present</span>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </section>
 
     </main>
   );
 }
-
