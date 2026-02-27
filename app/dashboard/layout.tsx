@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -9,55 +7,38 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-[#0d0d0f] text-white">
+    <div style={{ display: "flex", minHeight: "100vh" }}>
 
       {/* Sidebar */}
-      <aside className="w-64 bg-black border-r border-white/10 p-6 hidden md:flex flex-col justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-purple-500 mb-10">
-            LegalFormat
-          </h1>
+      <div
+        style={{
+          width: "250px",
+          background: "#0d0d0f",
+          color: "white",
+          padding: "20px",
+        }}
+      >
+        <h2 style={{ marginBottom: "30px" }}>LegalFormat</h2>
 
-          <nav className="space-y-3 text-gray-300">
-            <Link
-              href="/dashboard"
-              className="block px-4 py-3 rounded-xl hover:bg-white/5 transition"
-            >
-              Dashboard Overview
-            </Link>
-
-            <Link
-              href="/dashboard/documents"
-              className="block px-4 py-3 rounded-xl hover:bg-white/5 transition"
-            >
-              Documents
-            </Link>
-
-            <Link
-              href="/dashboard/billing"
-              className="block px-4 py-3 rounded-xl hover:bg-white/5 transition"
-            >
-              Billing
-            </Link>
-
-            <Link
-              href="/dashboard/settings"
-              className="block px-4 py-3 rounded-xl hover:bg-white/5 transition"
-            >
-              Settings
-            </Link>
-          </nav>
+        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+          <Link href="/dashboard">Overview</Link>
+          <Link href="/dashboard/documents">Documents</Link>
+          <Link href="/dashboard/billing">Billing</Link>
+          <Link href="/dashboard/settings">Settings</Link>
         </div>
-
-        <button className="px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition text-left">
-          Logout
-        </button>
-      </aside>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-10 bg-gradient-to-br from-[#0d0d0f] via-black to-[#111]">
+      <div
+        style={{
+          flex: 1,
+          padding: "40px",
+          background: "#111",
+          color: "white",
+        }}
+      >
         {children}
-      </main>
+      </div>
     </div>
   );
 }
