@@ -2,9 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "LegalFormat - AI Rent Agreement Auditor",
+  title: "Legal Format India",
   description:
-    "AI-powered Indian rent agreement compliance checker. Detect legal risks instantly.",
+    "Generate professional legal documents online in India. Rent agreement, affidavit, offer letter and more.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-gray-100 text-gray-900 antialiased min-h-screen">
+        {children}
+      </body>
     </html>
   );
 }
