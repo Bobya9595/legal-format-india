@@ -6,16 +6,22 @@ export default function HomePage() {
     <>
       <PublicHeader />
 
-      {/* Hero Section */}
-      <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-8 py-24 text-center">
-          <h1 className="text-5xl font-bold leading-tight mb-6">
+      <section className="relative min-h-screen flex items-center justify-center text-center px-6">
+
+        {/* Background Gradient Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-40" />
+
+        <div className="relative max-w-4xl mx-auto">
+
+          <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
             AI Legal Intelligence
             <br />
-            for Indian Agreements
+            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+              for Indian Agreements
+            </span>
           </h1>
 
-          <p className="text-lg text-gray-600 mb-10">
+          <p className="text-gray-400 text-lg mb-10">
             Generate rent agreements, affidavits, contracts and more
             in minutes using AI-powered automation.
           </p>
@@ -23,66 +29,21 @@ export default function HomePage() {
           <div className="flex justify-center gap-6">
             <Link
               href="/signup"
-              className="px-8 py-4 bg-black text-white rounded-xl text-lg hover:bg-gray-800 transition"
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 transition text-lg"
             >
               Get Started
             </Link>
 
             <Link
               href="/login"
-              className="px-8 py-4 border border-black rounded-xl text-lg hover:bg-black hover:text-white transition"
+              className="px-8 py-4 rounded-xl border border-white/20 hover:bg-white/10 transition text-lg"
             >
               Login
             </Link>
           </div>
+
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="bg-gray-100 py-20">
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="grid md:grid-cols-3 gap-10">
-
-            <div className="bg-white p-8 rounded-2xl shadow">
-              <h3 className="text-xl font-semibold mb-4">
-                AI Document Generation
-              </h3>
-              <p className="text-gray-600">
-                Automatically generate legally structured documents
-                tailored for Indian law.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl shadow">
-              <h3 className="text-xl font-semibold mb-4">
-                Smart Analysis
-              </h3>
-              <p className="text-gray-600">
-                Analyze contracts and agreements using AI for risks
-                and missing clauses.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl shadow">
-              <h3 className="text-xl font-semibold mb-4">
-                Secure & Cloud-Based
-              </h3>
-              <p className="text-gray-600">
-                All your documents stored securely in the cloud with
-                encrypted access.
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-black text-white py-8 text-center">
-        <p className="text-sm">
-          © {new Date().getFullYear()} LegalFormat. All rights reserved.
-        </p>
-      </footer>
     </>
   );
 }
