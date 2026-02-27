@@ -24,7 +24,7 @@ export default function DashboardLayout({
       {/* SIDEBAR */}
       <aside className="w-64 bg-[#111118] border-r border-gray-800 flex flex-col">
 
-        {/* LOGO */}
+        {/* LOGO + BACK */}
         <div className="px-6 py-6 border-b border-gray-800">
           <h1 className="text-xl font-semibold tracking-wide">
             <span className="text-white">Legal</span>
@@ -32,14 +32,21 @@ export default function DashboardLayout({
               Format
             </span>
           </h1>
+
           <p className="text-xs text-gray-500 mt-1">
             AI Legal Intelligence
           </p>
+
+          <Link
+            href="/"
+            className="text-xs text-gray-500 hover:text-white mt-3 inline-block"
+          >
+            ← Back to Website
+          </Link>
         </div>
 
         {/* NAVIGATION */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-
           {menu.map((item) => {
             const active = pathname === item.href;
 
@@ -57,14 +64,13 @@ export default function DashboardLayout({
               </Link>
             );
           })}
-
         </nav>
 
-        {/* BOTTOM SECTION */}
+        {/* PLAN CARD */}
         <div className="p-4 border-t border-gray-800">
-
           <div className="bg-[#16161d] p-4 rounded-xl border border-gray-800">
             <p className="text-sm text-gray-400 mb-2">Current Plan</p>
+
             <div className="flex justify-between items-center">
               <span className="text-purple-400 font-semibold">
                 Free
@@ -72,18 +78,17 @@ export default function DashboardLayout({
 
               <Link
                 href="/pricing"
-                className="text-xs bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 rounded-lg"
+                className="text-xs bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 rounded-lg hover:opacity-90"
               >
                 Upgrade
               </Link>
             </div>
           </div>
-
         </div>
 
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1">
         {children}
       </main>
