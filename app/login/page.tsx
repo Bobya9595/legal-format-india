@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 "use client"
 
 import { useState } from "react"
@@ -20,9 +22,9 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setMessage("Something went wrong.")
+      setMessage("Something went wrong. Please try again.")
     } else {
-      setMessage("Check your email for login link.")
+      setMessage("Check your email for the login link.")
     }
 
     setLoading(false)
