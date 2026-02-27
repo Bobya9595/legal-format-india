@@ -11,12 +11,14 @@ export default function AnalyzePage() {
   const [clauses, setClauses] = useState<
     { name: string; status: "valid" | "warning" | "missing" }[]
   >([]);
+  const [improvedDoc, setImprovedDoc] = useState<string>("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFileName(e.target.files[0].name);
       setRiskScore(null);
       setClauses([]);
+      setImprovedDoc("");
     }
   };
 
@@ -79,10 +81,40 @@ export default function AnalyzePage() {
     doc.save("LegalFormat-Analysis-Report.pdf");
   };
 
+  const handleImprove = () => {
+    const improvedText = `
+IMPROVED AGREEMENT DRAFT
+
+This agreement has been enhanced to include:
+
+1. Clear termination clause with notice period.
+2. Defined dispute resolution mechanism.
+3. Proper indemnity protection.
+4. Clearly defined governing jurisdiction.
+5. Improved payment timeline structure.
+
+This draft ensures better legal clarity and reduced risk exposure.
+    `;
+
+    setImprovedDoc(improvedText);
+  };
+
+  const handleDownloadImproved = () => {
+    if (!improvedDoc) return;
+
+    const doc = new jsPDF("p", "mm", "a4");
+    doc.setFont("Times", "Normal");
+    doc.setFontSize(12);
+
+    const lines = doc.splitTextToSize(improvedDoc, 170);
+    doc.text(lines, 20, 30);
+
+    doc.save("Improved-Agreement.pdf");
+  };
+
   return (
     <div className="min-h-screen bg-[#0c0c12] text-white p-10">
 
-      {/* Back Button */}
       <Link
         href="/dashboard"
         className="text-sm text-gray-400 hover:text-white mb-6 inline-block"
@@ -103,41 +135,23 @@ export default function AnalyzePage() {
             Upload Agreement (PDF or DOCX)
           </label>
 
-          <div className="border-2 border-dashed border-gray-700 rounded-2xl p-10 text-center">
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="hidden"
-              id="fileUpload"
-            />
-
-            <label
-              htmlFor="fileUpload"
-              className="cursor-pointer text-purple-400 hover:text-purple-300"
-            >
-              Click to upload
-            </label>
-
-            <p className="text-gray-500 text-sm mt-4">
-              {fileName ? `Selected: ${fileName}` : "No file selected"}
-            </p>
-          </div>
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+            className="mb-6"
+          />
 
           <button
             onClick={handleAnalyze}
-            className="mt-6 w-full bg-gradient-to-r from-purple-600 to-blue-600 py-3 rounded-xl hover:scale-105 transition"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 py-3 rounded-xl hover:scale-105 transition"
           >
-            {loading ? "Analyzing..." : "Analyze Agreement with AI"}
+            {loading ? "Analyzing..." : "Analyze Agreement"}
           </button>
         </div>
 
         {/* Results */}
         <div className="bg-[#16161d] p-8 rounded-2xl border border-gray-800">
-
-          <h2 className="text-lg font-semibold mb-6">
-            Risk Analysis Result
-          </h2>
 
           {loading && (
             <p className="text-purple-400">
@@ -148,76 +162,63 @@ export default function AnalyzePage() {
           {!loading && riskScore !== null && (
             <div className="space-y-6">
 
-              <div>
-                <div className="text-4xl font-bold text-purple-500">
-                  {riskScore}/100
-                </div>
-                <p className="text-gray-400">
-                  {riskScore > 80
-                    ? "Low Risk – Agreement looks strong."
-                    : "Medium Risk – Improvements recommended."}
-                </p>
+              <div className="text-4xl font-bold text-purple-500">
+                {riskScore}/100
               </div>
 
-              {/* Clause Badges */}
-              <div>
-                <h3 className="font-semibold mb-4">
-                  Clause Detection
-                </h3>
-
-                <div className="space-y-3">
-                  {clauses.map((clause, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center bg-[#1a1a23] p-3 rounded-lg border border-gray-800"
-                    >
-                      <span>{clause.name}</span>
-
-                      <span
-                        className={
-                          clause.status === "valid"
-                            ? "text-green-400"
-                            : clause.status === "warning"
-                            ? "text-yellow-400"
-                            : "text-red-400"
-                        }
-                      >
-                        {clause.status === "valid"
-                          ? "✓"
-                          : clause.status === "warning"
-                          ? "⚠"
-                          : "✖"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+              <div className="space-y-3">
+                {clauses.map((clause, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between bg-[#1a1a23] p-3 rounded-lg"
+                  >
+                    <span>{clause.name}</span>
+                    <span>
+                      {clause.status === "valid"
+                        ? "✓"
+                        : clause.status === "warning"
+                        ? "⚠"
+                        : "✖"}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              {/* Buttons */}
               <div className="flex gap-4 pt-4">
-
                 <button
                   onClick={handleDownloadReport}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl hover:scale-105 transition"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl"
                 >
-                  Download Report PDF
+                  Download Report
                 </button>
 
                 <button
-                  className="border border-gray-600 px-6 py-3 rounded-xl hover:border-purple-500 transition"
+                  onClick={handleImprove}
+                  className="border border-gray-600 px-6 py-3 rounded-xl"
                 >
                   Improve My Document
                 </button>
-
               </div>
 
-            </div>
-          )}
+              {improvedDoc && (
+                <div className="mt-6 space-y-4">
+                  <textarea
+                    value={improvedDoc}
+                    onChange={(e) => setImprovedDoc(e.target.value)}
+                    className="w-full bg-[#1a1a23] border border-gray-700 rounded-xl p-4 text-sm"
+                    rows={8}
+                  />
 
-          {!loading && riskScore === null && (
-            <p className="text-gray-500">
-              Upload and analyze a document to see results.
-            </p>
+                  <button
+                    onClick={handleDownloadImproved}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl"
+                  >
+                    Download Improved Draft
+                  </button>
+                </div>
+              )}
+
+            </div>
           )}
 
         </div>
