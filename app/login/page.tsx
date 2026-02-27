@@ -1,93 +1,61 @@
 "use client";
 
-import PublicHeader from "../../components/PublicHeader";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../lib/firebase";
+import { auth } from "@/lib/firebase";
+import PublicHeader from "@/components/PublicHeader";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      const user = userCredential.user;
-
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          email: user.email,
-          plan: "free",
-          documentCount: 0,
-          aiUsage: 0,
-          createdAt: new Date(),
-        });
-      }
-
-      router.push("/dashboard");
-
-    } catch (err: any) {
-      setError(err.message);
-    }
-
-    setLoading(false);
+    await signInWithEmailAndPassword(auth, email, password);
+    router.push("/dashboard");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-[350px] p-8 bg-white rounded-xl shadow-lg">
-        <h2 className="text-xl font-bold mb-6">Login to LegalFormat</h2>
+    <>
+      <PublicHeader />
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg"
-          />
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="w-[420px] bg-white p-10 rounded-2xl shadow-xl">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Welcome Back
+          </h2>
 
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border rounded-lg"
-          />
+          <form onSubmit={handleLogin} className="space-y-5">
+            <input
+              type="email"
+              placeholder="Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-4 border rounded-xl"
+            />
 
-          {error && (
-            <p className="text-red-500 text-sm">{error}</p>
-          )}
+            <input
+              type="password"
+              placeholder="Password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-4 border rounded-xl"
+            />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white p-3 rounded-lg"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-4 rounded-xl"
+            >
+              Login
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
