@@ -1,98 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { ReactNode } from "react";
+import {
+  LayoutDashboard,
+  FileText,
+  CreditCard,
+  Settings,
+  LogOut
+} from "lucide-react";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const pathname = usePathname();
-
-  const menu = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "New Analysis", href: "/analyze" },
-    { name: "Generate Document", href: "/generate" },
-    { name: "Reports", href: "/dashboard/reports" },
-    { name: "Billing", href: "/pricing" },
-  ];
-
   return (
-    <div className="flex min-h-screen bg-[#0c0c12] text-white">
+    <div className="flex min-h-screen bg-[#0d0d0f] text-white">
 
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-[#111118] border-r border-gray-800 flex flex-col">
-
-        {/* LOGO + BACK */}
-        <div className="px-6 py-6 border-b border-gray-800">
-          <h1 className="text-xl font-semibold tracking-wide">
-            <span className="text-white">Legal</span>
-            <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
-              Format
-            </span>
+      {/* Sidebar */}
+      <aside className="w-64 bg-black border-r border-white/10 p-6 hidden md:flex flex-col justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-purple-500 mb-10">
+            LegalFormat
           </h1>
 
-          <p className="text-xs text-gray-500 mt-1">
-            AI Legal Intelligence
-          </p>
+          <nav className="space-y-3">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition"
+            >
+              <LayoutDashboard size={18} />
+              Overview
+            </Link>
 
-          <Link
-            href="/"
-            className="text-xs text-gray-500 hover:text-white mt-3 inline-block"
-          >
-            ← Back to Website
-          </Link>
+            <Link
+              href="/dashboard/documents"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition"
+            >
+              <FileText size={18} />
+              Documents
+            </Link>
+
+            <Link
+              href="/dashboard/billing"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition"
+            >
+              <CreditCard size={18} />
+              Billing
+            </Link>
+
+            <Link
+              href="/dashboard/settings"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition"
+            >
+              <Settings size={18} />
+              Settings
+            </Link>
+          </nav>
         </div>
 
-        {/* NAVIGATION */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          {menu.map((item) => {
-            const active = pathname === item.href;
-
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`block px-4 py-3 rounded-xl transition-all duration-200 ${
-                  active
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg"
-                    : "text-gray-400 hover:bg-[#1a1a23] hover:text-white"
-                }`}
-              >
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* PLAN CARD */}
-        <div className="p-4 border-t border-gray-800">
-          <div className="bg-[#16161d] p-4 rounded-xl border border-gray-800">
-            <p className="text-sm text-gray-400 mb-2">Current Plan</p>
-
-            <div className="flex justify-between items-center">
-              <span className="text-purple-400 font-semibold">
-                Free
-              </span>
-
-              <Link
-                href="/pricing"
-                className="text-xs bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 rounded-lg hover:opacity-90"
-              >
-                Upgrade
-              </Link>
-            </div>
-          </div>
-        </div>
-
+        <button className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition">
+          <LogOut size={18} />
+          Logout
+        </button>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1">
+      {/* Main Content */}
+      <main className="flex-1 p-6 md:p-10 bg-gradient-to-br from-[#0d0d0f] via-black to-[#111]">
         {children}
       </main>
-
     </div>
   );
 }
