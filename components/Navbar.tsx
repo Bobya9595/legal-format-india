@@ -24,8 +24,9 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Auth Buttons */}
+        {/* Right Side Buttons */}
         <div className="flex items-center gap-4">
+
           <Link
             href="/login"
             className="text-sm text-gray-300 hover:text-white transition"
@@ -39,6 +40,7 @@ export default function Navbar() {
           >
             Get Started
           </Link>
+
         </div>
 
       </div>
