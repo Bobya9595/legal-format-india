@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
+import ContractEditor from "../../components/ContractEditor";
+
 import jsPDF from "jspdf";
+
 import { auth } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+
+import { Document, Packer, Paragraph, HeadingLevel } from "docx";
+import { saveAs } from "file-saver";
 
 export default function RentAgreementPage() {
 
@@ -18,14 +24,17 @@ export default function RentAgreementPage() {
 
   const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
     });
 
     return () => unsubscribe();
+
   }, []);
 
   const generateDocument = async () => {
@@ -52,6 +61,11 @@ export default function RentAgreementPage() {
     setLoading(false);
   };
 
+  const copyDocument = () => {
+    navigator.clipboard.writeText(document);
+    alert("Document copied!");
+  };
+
   const downloadPDF = () => {
 
     if (!user) {
@@ -59,18 +73,76 @@ export default function RentAgreementPage() {
       return;
     }
 
-    const pdf = new jsPDF();
+    const pdf = new jsPDF({
+      unit: "pt",
+      format: "a4"
+    });
 
-    const lines = pdf.splitTextToSize(document, 180);
+    const marginLeft = 60;
+    const pageWidth = 480;
 
-    pdf.text(lines, 10, 20);
+    pdf.setFont("Times", "Normal");
+    pdf.setFontSize(12);
+
+    pdf.setFont("Times", "Bold");
+    pdf.setFontSize(16);
+    pdf.text("RENT AGREEMENT", 300, 80, { align: "center" });
+
+    pdf.setFont("Times", "Normal");
+    pdf.setFontSize(12);
+
+    const lines = pdf.splitTextToSize(document, pageWidth);
+
+    pdf.text(lines, marginLeft, 120);
+
+    pdf.text("__________________________", marginLeft, 720);
+    pdf.text("Landlord Signature", marginLeft, 740);
+
+    pdf.text("__________________________", 350, 720);
+    pdf.text("Tenant Signature", 350, 740);
 
     pdf.save("rent-agreement.pdf");
   };
 
-  const copyDocument = () => {
-    navigator.clipboard.writeText(document);
-    alert("Document copied!");
+  const downloadDOCX = async () => {
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+
+            new Paragraph({
+              text: "RENT AGREEMENT",
+              heading: HeadingLevel.HEADING_1
+            }),
+
+            new Paragraph({
+              text: document
+            }),
+
+            new Paragraph({ text: "" }),
+
+            new Paragraph({
+              text: "Landlord Signature: ________________________"
+            }),
+
+            new Paragraph({
+              text: "Tenant Signature: ________________________"
+            })
+
+          ]
+        }
+      ]
+    });
+
+    const blob = await Packer.toBlob(doc);
+
+    saveAs(blob, "rent-agreement.docx");
   };
 
   return (
@@ -86,7 +158,7 @@ export default function RentAgreementPage() {
 
         <div className="grid md:grid-cols-2 gap-12">
 
-          {/* FORM */}
+          {/* LEFT FORM */}
 
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800">
 
@@ -131,19 +203,21 @@ export default function RentAgreementPage() {
 
           </div>
 
-          {/* PREVIEW */}
+          {/* RIGHT EDITOR */}
 
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800">
 
             <h2 className="text-xl font-semibold mb-6">
-              Agreement Preview
+              Agreement Editor
             </h2>
 
             {document ? (
+
               <>
-                <div className="whitespace-pre-wrap text-gray-300 leading-relaxed max-h-[500px] overflow-y-auto">
-                  {document}
-                </div>
+                <ContractEditor
+                  content={document}
+                  setContent={setDocument}
+                />
 
                 <div className="flex gap-4 mt-6">
 
@@ -161,12 +235,22 @@ export default function RentAgreementPage() {
                     Download PDF
                   </button>
 
+                  <button
+                    onClick={downloadDOCX}
+                    className="bg-blue-600 px-4 py-2 rounded"
+                  >
+                    Download DOCX
+                  </button>
+
                 </div>
               </>
+
             ) : (
+
               <p className="text-gray-500">
-                Your generated agreement will appear here.
+                Generate an agreement to start editing.
               </p>
+
             )}
 
           </div>
