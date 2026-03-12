@@ -1,17 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import jsPDF from "jspdf";
+import { auth } from "../../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function RentAgreementPage() {
+
+  const router = useRouter();
 
   const [landlord, setLandlord] = useState("");
   const [tenant, setTenant] = useState("");
   const [rent, setRent] = useState("");
   const [address, setAddress] = useState("");
+
   const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const generateDocument = async () => {
 
@@ -35,12 +50,20 @@ export default function RentAgreementPage() {
   };
 
   const downloadPDF = () => {
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     const pdf = new jsPDF();
+
     pdf.text(document, 10, 20);
+
     pdf.save("rent-agreement.pdf");
   };
 
-  const copyText = () => {
+  const copyDocument = () => {
     navigator.clipboard.writeText(document);
     alert("Document copied!");
   };
@@ -52,7 +75,7 @@ export default function RentAgreementPage() {
 
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 py-20 px-6">
 
-        {/* LEFT FORM */}
+        {/* LEFT SIDE FORM */}
 
         <div>
 
@@ -97,7 +120,7 @@ export default function RentAgreementPage() {
 
         </div>
 
-        {/* RIGHT PREVIEW */}
+        {/* RIGHT SIDE PREVIEW */}
 
         <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
 
@@ -114,7 +137,7 @@ export default function RentAgreementPage() {
               <div className="flex gap-4 mt-6">
 
                 <button
-                  onClick={copyText}
+                  onClick={copyDocument}
                   className="bg-gray-700 px-4 py-2 rounded"
                 >
                   Copy
@@ -131,7 +154,7 @@ export default function RentAgreementPage() {
             </>
           ) : (
             <p className="text-gray-500">
-              Your agreement will appear here.
+              Your agreement will appear here after generation.
             </p>
           )}
 
