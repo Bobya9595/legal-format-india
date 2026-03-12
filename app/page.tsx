@@ -25,7 +25,7 @@ export default function Home() {
 
         <ToolCard
           title="Rent Agreement Generator"
-          link="/rent-agreement"
+          link="/rent-agreement-format"
         />
 
         <ToolCard
@@ -62,3 +62,4 @@ function ToolCard({ title, link }: { title: string; link: string }) {
     </Link>
   );
 }
+
