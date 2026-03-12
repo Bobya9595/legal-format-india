@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -6,28 +7,58 @@ export default function Home() {
 
       <Navbar />
 
-      <section className="flex flex-col items-center justify-center text-center py-32 px-6">
+      <section className="text-center py-24 px-6">
 
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-          AI Legal Intelligence
-          <span className="block bg-gradient-to-r from-purple-500 to-blue-400 text-transparent bg-clip-text">
-            for Indian Agreements
-          </span>
+        <h1 className="text-5xl font-bold">
+          AI Legal Document Generator
         </h1>
 
-        <p className="text-gray-400 mt-6 max-w-xl">
-          Generate rent agreements instantly using AI.
+        <p className="text-gray-400 mt-4">
+          Create legal documents instantly using AI.
         </p>
 
-        <a
-          href="/rent-agreement"
-          className="mt-8 bg-gradient-to-r from-purple-600 to-blue-500 px-6 py-3 rounded-lg"
-        >
-          Generate Rent Agreement
-        </a>
+      </section>
+
+      {/* Tools Section */}
+
+      <section className="max-w-6xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
+
+        <ToolCard
+          title="Rent Agreement Generator"
+          link="/rent-agreement"
+        />
+
+        <ToolCard
+          title="Experience Letter Generator"
+          link="/experience-letter"
+        />
+
+        <ToolCard
+          title="Freelance Contract Generator"
+          link="/freelance-contract"
+        />
 
       </section>
 
     </main>
+  );
+}
+
+function ToolCard({ title, link }: { title: string; link: string }) {
+  return (
+    <Link
+      href={link}
+      className="p-6 border border-gray-800 rounded-xl hover:border-purple-500 transition"
+    >
+      <h3 className="text-xl font-semibold">{title}</h3>
+
+      <p className="text-gray-400 mt-2">
+        Generate this document using AI.
+      </p>
+
+      <span className="text-purple-400 mt-4 inline-block">
+        Open Tool →
+      </span>
+    </Link>
   );
 }
