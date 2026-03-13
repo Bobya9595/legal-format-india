@@ -6,18 +6,12 @@ import DocumentViewer from "../../components/DocumentViewer";
 
 import jsPDF from "jspdf";
 
-import { auth, db } from "../../lib/firebase";
+import { auth } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 import { Document, Packer, Paragraph } from "docx";
 import { saveAs } from "file-saver";
-
-import {
-  addDoc,
-  collection,
-  serverTimestamp
-} from "firebase/firestore";
 
 export default function RentAgreementPage() {
 
@@ -64,17 +58,6 @@ export default function RentAgreementPage() {
 
     setDocument(data.document);
 
-    if (user) {
-
-      await addDoc(collection(db, "documents"), {
-        userId: user.uid,
-        type: "rent-agreement",
-        content: data.document,
-        createdAt: serverTimestamp()
-      });
-
-    }
-
     setLoading(false);
   };
 
@@ -86,12 +69,23 @@ export default function RentAgreementPage() {
 
   };
 
-  const downloadPDF = () => {
+  /* START PAYMENT */
 
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+  const startPayment = async () => {
+
+    const res = await fetch("/api/create-checkout-session", {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    window.location.href = data.url;
+
+  };
+
+  /* PDF EXPORT */
+
+  const downloadPDF = () => {
 
     const pdf = new jsPDF({
       unit: "pt",
@@ -116,20 +110,17 @@ export default function RentAgreementPage() {
       }
 
       pdf.text(line, margin, y);
-
       y += 18;
 
     });
 
     pdf.save("rent-agreement.pdf");
+
   };
 
-  const downloadDOCX = async () => {
+  /* DOCX EXPORT */
 
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+  const downloadDOCX = async () => {
 
     const lines = document.split("\n");
 
@@ -137,9 +128,7 @@ export default function RentAgreementPage() {
       (line) =>
         new Paragraph({
           text: line,
-          spacing: {
-            after: 200
-          }
+          spacing: { after: 200 }
         })
     );
 
@@ -154,6 +143,7 @@ export default function RentAgreementPage() {
     const blob = await Packer.toBlob(doc);
 
     saveAs(blob, "rent-agreement.docx");
+
   };
 
   return (
@@ -234,17 +224,10 @@ export default function RentAgreementPage() {
                   </button>
 
                   <button
-                    onClick={downloadPDF}
+                    onClick={startPayment}
                     className="bg-purple-600 px-4 py-2 rounded"
                   >
-                    Download PDF
-                  </button>
-
-                  <button
-                    onClick={downloadDOCX}
-                    className="bg-blue-600 px-4 py-2 rounded"
-                  >
-                    Download DOCX
+                    Pay ₹10 & Download
                   </button>
 
                 </div>
@@ -265,6 +248,5 @@ export default function RentAgreementPage() {
       </div>
 
     </main>
-
   );
 }
