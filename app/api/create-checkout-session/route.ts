@@ -1,18 +1,17 @@
-```ts
-import { NextResponse } from "next/server"
-import Stripe from "stripe"
+
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2024-06-20",
-})
+});
 
 export async function POST() {
-
   try {
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       mode: "payment",
+      payment_method_types: ["card"],
 
       line_items: [
         {
@@ -29,21 +28,18 @@ export async function POST() {
 
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/rent-agreement-format`
+    });
 
-    })
-
-    return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: session.url });
 
   } catch (error) {
 
-    console.error(error)
+    console.error("Stripe Error:", error);
 
     return NextResponse.json(
-      { error: "Stripe session error" },
+      { error: "Stripe session creation failed" },
       { status: 500 }
-    )
+    );
 
   }
-
 }
-```
