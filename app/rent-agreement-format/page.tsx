@@ -2,8 +2,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import jsPDF from "jspdf";
-
 import Navbar from "@/components/Navbar";
 import DocumentViewer from "@/components/DocumentViewer";
 
@@ -19,17 +17,20 @@ export default function RentAgreementPage() {
 
   const [documentText, setDocumentText] = useState("");
   const [loading, setLoading] = useState(false);
+
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
     });
 
     return () => unsubscribe();
+
   }, []);
 
-  /* Generate Agreement */
+  /* GENERATE AGREEMENT */
 
   const generateDocument = async () => {
 
@@ -60,29 +61,35 @@ export default function RentAgreementPage() {
       setDocumentText(data.document);
 
     } catch (error) {
+
       console.error(error);
       alert("Error generating document");
+
     }
 
     setLoading(false);
 
   };
 
-  /* Copy document */
-
-  const copyDocument = () => {
-    navigator.clipboard.writeText(documentText);
-    alert("Copied to clipboard");
-  };
-
-  /* Start Stripe Payment */
+  /* PAYMENT FLOW */
 
   const startPayment = async () => {
 
+    if (!documentText) {
+      alert("Generate agreement first");
+      return;
+    }
+
     if (!user) {
-      alert("Please login first");
+
+      localStorage.setItem(
+        "redirectAfterLogin",
+        "/rent-agreement-format"
+      );
+
       window.location.href = "/login";
       return;
+
     }
 
     try {
@@ -94,9 +101,13 @@ export default function RentAgreementPage() {
       const data = await res.json();
 
       if (data.url) {
+
         window.location.href = data.url;
+
       } else {
-        alert("Payment session failed");
+
+        alert(data.error || "Payment session failed");
+
       }
 
     } catch (error) {
@@ -105,41 +116,6 @@ export default function RentAgreementPage() {
       alert("Payment error");
 
     }
-
-  };
-
-  /* Download PDF */
-
-  const downloadPDF = () => {
-
-    const pdf = new jsPDF({
-      unit: "pt",
-      format: "a4"
-    });
-
-    const margin = 60;
-    const width = 480;
-
-    pdf.setFont("Times", "Normal");
-    pdf.setFontSize(12);
-
-    const lines = pdf.splitTextToSize(documentText, width);
-
-    let y = 80;
-
-    lines.forEach((line: string) => {
-
-      if (y > 750) {
-        pdf.addPage();
-        y = 80;
-      }
-
-      pdf.text(line, margin, y);
-      y += 18;
-
-    });
-
-    pdf.save("rent-agreement.pdf");
 
   };
 
@@ -157,7 +133,7 @@ export default function RentAgreementPage() {
 
         <div className="grid md:grid-cols-2 gap-12">
 
-          {/* FORM */}
+          {/* FORM PANEL */}
 
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800">
 
@@ -211,14 +187,7 @@ export default function RentAgreementPage() {
               <>
                 <DocumentViewer content={documentText} />
 
-                <div className="flex gap-4 mt-6 flex-wrap">
-
-                  <button
-                    onClick={copyDocument}
-                    className="bg-gray-700 px-4 py-2 rounded"
-                  >
-                    Copy
-                  </button>
+                <div className="flex gap-4 mt-6">
 
                   <button
                     onClick={startPayment}
@@ -227,14 +196,8 @@ export default function RentAgreementPage() {
                     Pay ₹10 & Download
                   </button>
 
-                  <button
-                    onClick={downloadPDF}
-                    className="bg-green-600 px-4 py-2 rounded"
-                  >
-                    Download PDF
-                  </button>
-
                 </div>
+
               </>
 
             ) : (
@@ -254,5 +217,5 @@ export default function RentAgreementPage() {
     </main>
 
   );
-}
 
+}
