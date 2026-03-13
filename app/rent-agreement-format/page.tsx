@@ -1,221 +1,36 @@
 
-"use client";
+const startPayment = async () => {
 
-import { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import DocumentViewer from "@/components/DocumentViewer";
+  try {
 
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-
-export default function RentAgreementPage() {
-
-  const [landlord, setLandlord] = useState("");
-  const [tenant, setTenant] = useState("");
-  const [rent, setRent] = useState("");
-  const [address, setAddress] = useState("");
-
-  const [documentText, setDocumentText] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    const res = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
 
-    return () => unsubscribe();
+    const data = await res.json();
 
-  }, []);
+    console.log("Stripe response:", data);
 
-  /* GENERATE AGREEMENT */
+    if (data.url) {
 
-  const generateDocument = async () => {
+      // Redirect user to Stripe checkout
+      window.location.href = data.url;
 
-    if (!landlord || !tenant || !rent || !address) {
-      alert("Please fill all fields");
-      return;
-    }
+    } else {
 
-    setLoading(true);
-
-    try {
-
-      const res = await fetch("/api/generate-document", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          landlord,
-          tenant,
-          rent,
-          address
-        })
-      });
-
-      const data = await res.json();
-
-      setDocumentText(data.document);
-
-    } catch (error) {
-
-      console.error(error);
-      alert("Error generating document");
+      alert(data.error || "Stripe checkout failed");
 
     }
 
-    setLoading(false);
+  } catch (error) {
 
-  };
+    console.error("Payment error:", error);
+    alert("Payment error");
 
-  /* PAYMENT FLOW */
+  }
 
-  const startPayment = async () => {
+};
 
-    if (!documentText) {
-      alert("Generate agreement first");
-      return;
-    }
-
-    if (!user) {
-
-      localStorage.setItem(
-        "redirectAfterLogin",
-        "/rent-agreement-format"
-      );
-
-      window.location.href = "/login";
-      return;
-
-    }
-
-    try {
-
-      const res = await fetch("/api/create-checkout-session", {
-        method: "POST"
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-
-        window.location.href = data.url;
-
-      } else {
-
-        alert(data.error || "Payment session failed");
-
-      }
-
-    } catch (error) {
-
-      console.error(error);
-      alert("Payment error");
-
-    }
-
-  };
-
-  return (
-
-    <main className="min-h-screen bg-[#020617] text-white">
-
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto py-20 px-6">
-
-        <h1 className="text-4xl font-bold text-center mb-12">
-          Rent Agreement Generator
-        </h1>
-
-        <div className="grid md:grid-cols-2 gap-12">
-
-          {/* FORM PANEL */}
-
-          <div className="bg-gray-900 p-8 rounded-xl border border-gray-800">
-
-            <h2 className="text-xl font-semibold mb-6">
-              Agreement Details
-            </h2>
-
-            <div className="space-y-4">
-
-              <input
-                placeholder="Landlord Name"
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700"
-                onChange={(e)=>setLandlord(e.target.value)}
-              />
-
-              <input
-                placeholder="Tenant Name"
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700"
-                onChange={(e)=>setTenant(e.target.value)}
-              />
-
-              <input
-                placeholder="Monthly Rent"
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700"
-                onChange={(e)=>setRent(e.target.value)}
-              />
-
-              <textarea
-                placeholder="Property Address"
-                className="w-full p-3 rounded bg-gray-800 border border-gray-700"
-                onChange={(e)=>setAddress(e.target.value)}
-              />
-
-              <button
-                onClick={generateDocument}
-                className="w-full bg-purple-600 py-3 rounded-lg"
-              >
-                {loading ? "Generating..." : "Generate Agreement"}
-              </button>
-
-            </div>
-
-          </div>
-
-          {/* DOCUMENT PREVIEW */}
-
-          <div className="bg-gray-900 p-6 rounded-xl border border-gray-800">
-
-            {documentText ? (
-
-              <>
-                <DocumentViewer content={documentText} />
-
-                <div className="flex gap-4 mt-6">
-
-                  <button
-                    onClick={startPayment}
-                    className="bg-purple-600 px-4 py-2 rounded"
-                  >
-                    Pay ₹10 & Download
-                  </button>
-
-                </div>
-
-              </>
-
-            ) : (
-
-              <p className="text-gray-400">
-                Generate an agreement to preview the document.
-              </p>
-
-            )}
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </main>
-
-  );
-
-}
