@@ -12,43 +12,48 @@ export async function POST(req: Request) {
     const prompt = `
 You are a professional legal contract drafting assistant.
 
-Create a RENT AGREEMENT for India using the following details.
+Write a professional RENT AGREEMENT for India using the details below.
 
-Landlord: ${body.landlord}
-Tenant: ${body.tenant}
+Landlord Name: ${body.landlord}
+Tenant Name: ${body.tenant}
 Monthly Rent: ₹${body.rent}
 Property Address: ${body.address}
 
-The agreement must be structured like a real legal document.
+Use this format exactly:
 
-Format:
+# RENT AGREEMENT
 
-RENT AGREEMENT
+## 1. PARTIES
+Describe the landlord and tenant.
 
-1. PARTIES  
-Explain the landlord and tenant relationship.
+## 2. PROPERTY DETAILS
+Describe the property being rented.
 
-2. PROPERTY DETAILS  
-Describe the rented property.
+## 3. RENT TERMS
+Explain rent amount, due date, and payment method.
 
-3. RENT TERMS  
-Mention monthly rent and payment rules.
+## 4. SECURITY DEPOSIT
+Explain deposit amount and refund rules.
 
-4. SECURITY DEPOSIT
+## 5. AGREEMENT DURATION
+Mention start date and duration.
 
-5. AGREEMENT DURATION
+## 6. TENANT RESPONSIBILITIES
+List tenant duties.
 
-6. TENANT RESPONSIBILITIES
+## 7. LANDLORD RESPONSIBILITIES
+List landlord duties.
 
-7. LANDLORD RESPONSIBILITIES
+## 8. TERMINATION
+Explain notice period and termination rules.
 
-8. TERMINATION CLAUSE
+## 9. GOVERNING LAW
+Mention Indian jurisdiction.
 
-9. GOVERNING LAW
+## 10. SIGNATURES
+Provide landlord and tenant signature sections.
 
-10. SIGNATURES
-
-Use clear legal language with numbered clauses.
+Use professional legal language suitable for India.
 `;
 
     const completion = await openai.chat.completions.create({
@@ -69,9 +74,7 @@ Use clear legal language with numbered clauses.
     console.error("AI generation error:", error);
 
     return new Response(
-      JSON.stringify({
-        error: "Failed to generate document"
-      }),
+      JSON.stringify({ error: "Failed to generate document" }),
       { status: 500 }
     );
   }
