@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "../../lib/firebase";
 
@@ -12,7 +12,7 @@ export default function RentAgreementPage() {
   const [landlord, setLandlord] = useState("");
   const [tenant, setTenant] = useState("");
   const [rent, setRent] = useState("");
-  const [extraRules, setExtraRules] = useState("");
+  const [rules, setRules] = useState("");
 
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function RentAgreementPage() {
         landlord,
         tenant,
         rent,
-        extraRules
+        rules
       })
     });
 
@@ -44,7 +44,7 @@ export default function RentAgreementPage() {
 
   };
 
-  /* PAYMENT FLOW */
+  /* PAYMENT */
 
   const handlePayment = async () => {
 
@@ -62,7 +62,9 @@ export default function RentAgreementPage() {
     const data = await res.json();
 
     if (data.url) {
+
       window.location.href = data.url;
+
     }
 
   };
@@ -79,9 +81,9 @@ export default function RentAgreementPage() {
 
       {/* MAIN GRID */}
 
-      <div className="grid grid-cols-2 gap-12">
+      <div className="grid grid-cols-2 gap-10">
 
-        {/* LEFT SIDE FORM */}
+        {/* LEFT FORM */}
 
         <div className="bg-white/5 border border-white/10 rounded-xl p-8">
 
@@ -110,9 +112,9 @@ export default function RentAgreementPage() {
             />
 
             <textarea
-              placeholder="Optional rules (example: no pets, 11 months agreement)"
+              placeholder="Optional rules (example: no pets, 11 month agreement)"
               className="p-3 rounded bg-gray-800 border border-gray-700 h-24"
-              onChange={(e)=>setExtraRules(e.target.value)}
+              onChange={(e)=>setRules(e.target.value)}
             />
 
             <button
@@ -126,9 +128,9 @@ export default function RentAgreementPage() {
 
         </div>
 
-        {/* RIGHT SIDE PREVIEW */}
+        {/* RIGHT PREVIEW */}
 
-        <div className="bg-white text-black rounded-xl p-8 shadow-xl relative">
+        <div className="relative bg-white text-black rounded-xl p-8 shadow-xl">
 
           <h2 className="text-lg font-semibold mb-4">
             Agreement Preview
@@ -137,7 +139,9 @@ export default function RentAgreementPage() {
           {agreement ? (
 
             <>
-              <div className="blur-sm select-none">
+              {/* BLURRED DOCUMENT */}
+
+              <div className="blur-md select-none pointer-events-none">
 
                 <pre className="whitespace-pre-wrap text-sm leading-relaxed">
                   {agreement}
@@ -145,17 +149,17 @@ export default function RentAgreementPage() {
 
               </div>
 
-              {/* PAY BUTTON */}
+              {/* PAYWALL */}
 
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-xl">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 rounded-xl z-20">
 
-                <p className="text-white mb-4">
+                <p className="text-white text-lg mb-4">
                   Unlock full agreement for ₹10
                 </p>
 
                 <button
                   onClick={handlePayment}
-                  className="bg-purple-600 px-6 py-3 rounded-lg text-white"
+                  className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg text-white"
                 >
                   Pay ₹10 & Download
                 </button>
