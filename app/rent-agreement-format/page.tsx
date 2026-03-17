@@ -15,7 +15,7 @@ export default function RentAgreementPage() {
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 LOAD RAZORPAY SCRIPT
+  // 🔥 Load Razorpay
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -26,7 +26,7 @@ export default function RentAgreementPage() {
     });
   };
 
-  // ✅ GENERATE AGREEMENT
+  // ✅ Generate Agreement
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -41,14 +41,14 @@ export default function RentAgreementPage() {
 
       const data = await res.json();
       setAgreement(data.document);
-    } catch (err) {
+    } catch {
       alert("Error generating agreement");
     }
 
     setLoading(false);
   };
 
-  // 💰 FINAL PAYMENT FUNCTION
+  // 💰 Payment
   const handlePayment = async () => {
     if (!auth.currentUser) {
       router.push("/login");
@@ -58,52 +58,57 @@ export default function RentAgreementPage() {
     const loaded = await loadRazorpay();
 
     if (!loaded) {
-      alert("Razorpay SDK failed to load");
+      alert("Razorpay failed to load");
       return;
     }
 
-    const res = await fetch("/api/create-order", {
-      method: "POST",
-    });
+    try {
+      const res = await fetch("/api/create-order", {
+        method: "POST",
+      });
 
-    const order = await res.json();
+      const order = await res.json();
 
-    if (!order.id) {
-      alert("Order creation failed");
-      return;
+      if (!order.id) {
+        alert("Order creation failed");
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "LegalFormat",
+        description: "Download Agreement",
+        order_id: order.id,
+
+        handler: function () {
+          alert("Payment Successful 🎉");
+          window.location.href = "/success";
+        },
+
+        theme: {
+          color: "#7c3aed",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+
+    } catch {
+      alert("Payment failed");
     }
-
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: "LegalFormat",
-      description: "Download Agreement",
-      order_id: order.id,
-
-      handler: function (response: any) {
-        alert("Payment Successful 🎉");
-        window.location.href = "/success";
-      },
-
-      theme: {
-        color: "#7c3aed",
-      },
-    };
-
-    const rzp = new (window as any).Razorpay(options);
-    rzp.open();
   };
 
   return (
     <main className="min-h-screen bg-[#020617] text-white px-10 py-12">
-      
-      {/* HEADER */}
+
+      {/* Header */}
       <h1 className="text-3xl font-bold mb-10">
         Legal<span className="text-purple-500">Format</span>
       </h1>
 
-      {/* GRID */}
+      {/* Grid */}
       <div className="grid grid-cols-2 gap-10">
 
         {/* LEFT FORM */}
@@ -151,7 +156,6 @@ export default function RentAgreementPage() {
         {/* RIGHT PREVIEW */}
         <div className="relative bg-white text-black rounded-xl shadow-xl overflow-hidden">
 
-          {/* HEADER */}
           <div className="p-6 border-b">
             <h2 className="text-lg font-semibold">Agreement Preview</h2>
           </div>
@@ -159,7 +163,6 @@ export default function RentAgreementPage() {
           {agreement ? (
             <div className="relative">
 
-              {/* DOCUMENT */}
               <div className="p-6 blur-sm select-none">
                 <pre className="whitespace-pre-wrap text-sm leading-relaxed">
                   {agreement}
@@ -176,14 +179,14 @@ export default function RentAgreementPage() {
                   </p>
 
                   <p className="mb-6 text-sm text-gray-300">
-                    Pay ₹10 to download
+                    Pay ₹1 to download
                   </p>
 
                   <button
                     onClick={handlePayment}
                     className="w-full bg-gradient-to-r from-purple-500 to-purple-700 py-3 rounded-lg font-semibold hover:scale-105 transition"
                   >
-                    Pay ₹10 & Download
+                    Pay ₹1 & Download
                   </button>
 
                 </div>
