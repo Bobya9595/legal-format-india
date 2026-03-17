@@ -4,12 +4,13 @@ export const runtime = "nodejs";
 
 export async function POST() {
   try {
-    // 🔥 CHECK ENV FIRST
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("Missing STRIPE_SECRET_KEY");
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+
+    if (!secretKey) {
+      throw new Error("STRIPE_SECRET_KEY is missing");
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const stripe = new Stripe(secretKey);
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -27,18 +28,14 @@ export async function POST() {
         },
       ],
 
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+      success_url: "https://legalformat.in/success",
+      cancel_url: "https://legalformat.in",
     });
 
-    console.log("✅ SESSION CREATED:", session.url);
-
-    return new Response(JSON.stringify({ url: session.url }), {
-      status: 200,
-    });
+    return Response.json({ url: session.url });
 
   } catch (err: any) {
-    console.error("❌ STRIPE ERROR FULL:", err);
+    console.error("🔥 STRIPE ERROR:", err.message);
 
     return new Response(
       JSON.stringify({ error: err.message }),
