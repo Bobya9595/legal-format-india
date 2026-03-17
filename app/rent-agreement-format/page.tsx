@@ -15,7 +15,7 @@ export default function RentAgreementPage() {
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* ✅ GENERATE AGREEMENT */
+  /* GENERATE AGREEMENT */
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -37,10 +37,8 @@ export default function RentAgreementPage() {
     setLoading(false);
   };
 
-  /* ✅ PAYMENT */
+  /* FINAL PAYMENT HANDLER (FIXED) */
   const handlePayment = async () => {
-    console.log("CLICKED PAY BUTTON"); // debug
-
     if (!auth.currentUser) {
       router.push("/login");
       return;
@@ -51,17 +49,24 @@ export default function RentAgreementPage() {
         method: "POST",
       });
 
-      const data = await res.json();
-      console.log("Stripe response:", data);
+      const text = await res.text(); // 👈 critical fix
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        alert(text); // shows real backend error
+        return;
+      }
 
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Payment failed");
+        alert(data.error || "Payment failed");
       }
+
     } catch (err) {
-      console.error(err);
-      alert("Payment error");
+      alert("Something went wrong");
     }
   };
 
