@@ -11,7 +11,6 @@ export default function RentAgreementPage() {
   const [tenant, setTenant] = useState("");
   const [rent, setRent] = useState("");
   const [rules, setRules] = useState("");
-
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +25,7 @@ export default function RentAgreementPage() {
     });
   };
 
-  // ✅ Generate Agreement
+  // ✅ Generate Agreement + Save
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -40,7 +39,12 @@ export default function RentAgreementPage() {
       });
 
       const data = await res.json();
+
       setAgreement(data.document);
+
+      // ✅ SAVE AGREEMENT FOR DOWNLOAD
+      localStorage.setItem("agreement", data.document);
+
     } catch {
       alert("Error generating agreement");
     }
@@ -58,148 +62,105 @@ export default function RentAgreementPage() {
     const loaded = await loadRazorpay();
 
     if (!loaded) {
-      alert("Razorpay failed to load");
+      alert("Razorpay failed");
       return;
     }
 
-    try {
-      const res = await fetch("/api/create-order", {
-        method: "POST",
-      });
+    const res = await fetch("/api/create-order", {
+      method: "POST",
+    });
 
-      const order = await res.json();
+    const order = await res.json();
 
-      if (!order.id) {
-        alert("Order creation failed");
-        return;
-      }
-
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        name: "LegalFormat",
-        description: "Download Agreement",
-        order_id: order.id,
-
-        handler: function () {
-          alert("Payment Successful 🎉");
-          window.location.href = "/success";
-        },
-
-        theme: {
-          color: "#7c3aed",
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-
-    } catch {
-      alert("Payment failed");
+    if (!order.id) {
+      alert("Order failed");
+      return;
     }
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "LegalFormat",
+      description: "Download Agreement",
+      order_id: order.id,
+
+      handler: function () {
+        window.location.href = "/success";
+      },
+
+      theme: {
+        color: "#7c3aed",
+      },
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   };
 
   return (
     <main className="min-h-screen bg-[#020617] text-white px-10 py-12">
-
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-10">
         Legal<span className="text-purple-500">Format</span>
       </h1>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 gap-10">
 
-        {/* LEFT FORM */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-8">
-          <h2 className="text-xl font-semibold mb-6">
-            Rent Agreement Details
-          </h2>
+        {/* FORM */}
+        <div className="bg-white/5 p-8 rounded-xl">
+          <h2 className="text-xl mb-6">Rent Agreement Details</h2>
 
-          <div className="flex flex-col gap-4">
+          <input
+            placeholder="Landlord"
+            className="p-3 mb-4 w-full bg-gray-800"
+            onChange={(e) => setLandlord(e.target.value)}
+          />
 
-            <input
-              placeholder="Landlord Name"
-              className="p-3 rounded bg-gray-800 border border-gray-700"
-              onChange={(e) => setLandlord(e.target.value)}
-            />
+          <input
+            placeholder="Tenant"
+            className="p-3 mb-4 w-full bg-gray-800"
+            onChange={(e) => setTenant(e.target.value)}
+          />
 
-            <input
-              placeholder="Tenant Name"
-              className="p-3 rounded bg-gray-800 border border-gray-700"
-              onChange={(e) => setTenant(e.target.value)}
-            />
+          <input
+            placeholder="Rent"
+            className="p-3 mb-4 w-full bg-gray-800"
+            onChange={(e) => setRent(e.target.value)}
+          />
 
-            <input
-              placeholder="Monthly Rent (₹)"
-              className="p-3 rounded bg-gray-800 border border-gray-700"
-              onChange={(e) => setRent(e.target.value)}
-            />
+          <textarea
+            placeholder="Rules"
+            className="p-3 mb-4 w-full bg-gray-800"
+            onChange={(e) => setRules(e.target.value)}
+          />
 
-            <textarea
-              placeholder="Optional rules (no pets, 11 month agreement)"
-              className="p-3 rounded bg-gray-800 border border-gray-700 h-24"
-              onChange={(e) => setRules(e.target.value)}
-            />
-
-            <button
-              onClick={generateAgreement}
-              className="bg-gradient-to-r from-purple-500 to-purple-700 py-3 rounded-lg font-semibold"
-            >
-              {loading ? "Generating..." : "Generate Agreement"}
-            </button>
-
-          </div>
+          <button
+            onClick={generateAgreement}
+            className="bg-purple-600 px-6 py-3 rounded-lg"
+          >
+            {loading ? "Generating..." : "Generate Agreement"}
+          </button>
         </div>
 
-        {/* RIGHT PREVIEW */}
-        <div className="relative bg-white text-black rounded-xl shadow-xl overflow-hidden">
-
-          <div className="p-6 border-b">
-            <h2 className="text-lg font-semibold">Agreement Preview</h2>
-          </div>
+        {/* PREVIEW */}
+        <div className="relative bg-white text-black rounded-xl p-6">
 
           {agreement ? (
-            <div className="relative">
+            <>
+              <pre className="blur-sm">{agreement}</pre>
 
-              <div className="p-6 blur-sm select-none">
-                <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {agreement}
-                </pre>
-              </div>
-
-              {/* PAYWALL */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-
-                <div className="bg-[#0f172a] text-white p-8 rounded-xl text-center shadow-2xl w-[300px]">
-
-                  <p className="mb-4 text-lg font-semibold">
-                    Unlock full agreement
-                  </p>
-
-                  <p className="mb-6 text-sm text-gray-300">
-                    Pay ₹1 to download
-                  </p>
-
-                  <button
-                    onClick={handlePayment}
-                    className="w-full bg-gradient-to-r from-purple-500 to-purple-700 py-3 rounded-lg font-semibold hover:scale-105 transition"
-                  >
-                    Pay ₹1 & Download
-                  </button>
-
-                </div>
-
+                <button
+                  onClick={handlePayment}
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg"
+                >
+                  Pay ₹1 & Download
+                </button>
               </div>
-
-            </div>
+            </>
           ) : (
-            <p className="p-6 text-gray-500">
-              Generate the agreement to preview the document.
-            </p>
+            <p>Generate agreement to preview</p>
           )}
-
         </div>
 
       </div>
