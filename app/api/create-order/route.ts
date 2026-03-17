@@ -10,7 +10,7 @@ export async function POST() {
     });
 
     const order = await razorpay.orders.create({
-      amount: 1000, // ₹10 (in paise)
+      amount: 100, // ✅ ₹1 (testing)
       currency: "INR",
       receipt: "legalformat_order",
     });
