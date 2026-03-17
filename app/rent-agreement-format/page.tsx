@@ -25,7 +25,7 @@ export default function RentAgreementPage() {
     });
   };
 
-  // Generate Agreement
+  // Generate agreement
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -42,7 +42,6 @@ export default function RentAgreementPage() {
 
       setAgreement(data.document);
 
-      // Save for download
       localStorage.setItem("agreement", data.document);
 
     } catch {
@@ -84,11 +83,9 @@ export default function RentAgreementPage() {
       name: "LegalFormat",
       description: "Download Agreement",
       order_id: order.id,
-
       handler: function () {
         window.location.href = "/success";
       },
-
       theme: {
         color: "#7c3aed",
       },
@@ -153,7 +150,7 @@ export default function RentAgreementPage() {
         </div>
 
         {/* RIGHT PREVIEW */}
-        <div className="bg-[#0b1220] border border-white/10 rounded-2xl shadow-xl h-[600px] flex flex-col overflow-hidden">
+        <div className="relative bg-[#0b1220] border border-white/10 rounded-2xl shadow-xl h-[600px] flex flex-col overflow-hidden">
 
           {/* HEADER */}
           <div className="px-5 py-3 border-b border-white/10 text-sm text-gray-400">
@@ -161,13 +158,13 @@ export default function RentAgreementPage() {
           </div>
 
           {agreement ? (
-            <div className="relative flex-1 flex items-center justify-center">
+            <div className="relative flex-1">
 
               {/* SCROLL AREA */}
               <div className="w-full h-full overflow-y-auto flex justify-center p-6">
 
-                {/* DOCUMENT CARD */}
-                <div className="w-[520px] min-h-full bg-white text-black rounded-lg shadow-2xl p-8 leading-relaxed text-sm">
+                {/* DOCUMENT */}
+                <div className="w-[520px] bg-white text-black rounded-lg shadow-2xl p-8 text-sm leading-relaxed">
 
                   <pre className="whitespace-pre-wrap font-serif">
                     {agreement}
@@ -177,10 +174,10 @@ export default function RentAgreementPage() {
 
               </div>
 
-              {/* PAYWALL */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+              {/* PAYWALL FIXED */}
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
 
-                <div className="bg-[#0f172a] border border-white/10 p-8 rounded-2xl text-center shadow-xl w-[320px]">
+                <div className="bg-[#0f172a] border border-white/10 p-8 rounded-2xl text-center shadow-xl w-[320px] pointer-events-auto">
 
                   <p className="text-lg font-semibold mb-2">
                     Unlock full agreement
@@ -192,7 +189,7 @@ export default function RentAgreementPage() {
 
                   <button
                     onClick={handlePayment}
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg"
+                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg cursor-pointer"
                   >
                     Pay ₹1 & Download
                   </button>
