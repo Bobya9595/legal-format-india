@@ -14,7 +14,7 @@ export default function RentAgreementPage() {
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Razorpay loader
+  // Load Razorpay
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -25,10 +25,9 @@ export default function RentAgreementPage() {
     });
   };
 
-  // Generate agreement
+  // Generate Agreement
   const generateAgreement = async () => {
     setLoading(true);
-
     try {
       const res = await fetch("/api/generate-document", {
         method: "POST",
@@ -39,14 +38,11 @@ export default function RentAgreementPage() {
       });
 
       const data = await res.json();
-
       setAgreement(data.document);
       localStorage.setItem("agreement", data.document);
-
     } catch {
       alert("Error generating agreement");
     }
-
     setLoading(false);
   };
 
@@ -58,9 +54,8 @@ export default function RentAgreementPage() {
     }
 
     const loaded = await loadRazorpay();
-
     if (!loaded) {
-      alert("Razorpay failed");
+      alert("Razorpay failed to load");
       return;
     }
 
@@ -100,11 +95,10 @@ export default function RentAgreementPage() {
         Legal<span className="text-purple-500">Format</span>
       </h1>
 
-      <div className="grid grid-cols-2 gap-10 items-start">
+      <div className="grid grid-cols-2 gap-10">
 
         {/* LEFT FORM */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
-
+        <div className="bg-white/5 border border-white/10 rounded-xl p-8">
           <h2 className="text-xl font-semibold mb-6">
             Rent Agreement Details
           </h2>
@@ -137,7 +131,7 @@ export default function RentAgreementPage() {
 
             <button
               onClick={generateAgreement}
-              className="bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg"
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-lg font-semibold"
             >
               {loading ? "Generating..." : "Generate Agreement"}
             </button>
@@ -146,49 +140,44 @@ export default function RentAgreementPage() {
         </div>
 
         {/* RIGHT PREVIEW */}
-        <div className="relative bg-[#0b1220] border border-white/10 rounded-2xl shadow-xl h-[600px] flex flex-col overflow-hidden">
+        <div className="relative bg-[#0b1220] border border-white/10 rounded-xl h-[600px] overflow-hidden flex flex-col">
 
-          {/* HEADER */}
-          <div className="px-5 py-3 border-b border-white/10 text-sm text-gray-400">
+          <div className="p-4 border-b border-white/10 text-gray-400">
             Agreement Preview
           </div>
 
           {agreement ? (
             <div className="relative flex-1">
 
-              {/* SCROLLABLE AREA */}
-              <div className="w-full h-full overflow-y-auto flex justify-center p-6">
+              {/* SCROLL AREA */}
+              <div className="h-full overflow-y-auto flex justify-center p-6">
 
-                {/* DOCUMENT */}
-                <div className="w-[520px] bg-white text-black rounded-lg shadow-2xl p-8 text-sm leading-7 font-serif relative">
+                <div className="w-[500px] bg-white text-black rounded-lg p-6 text-sm leading-6 font-serif">
 
                   <pre className="whitespace-pre-wrap">
                     {agreement}
                   </pre>
-
-                  {/* FADE EFFECT */}
-                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
 
                 </div>
 
               </div>
 
               {/* PAYWALL */}
-              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-50">
 
-                <div className="bg-[#0f172a] border border-white/10 p-8 rounded-2xl text-center shadow-xl w-[320px]">
+                <div className="bg-[#0f172a] p-6 rounded-xl text-center w-[300px]">
 
                   <p className="text-lg font-semibold mb-2">
                     Unlock full agreement
                   </p>
 
-                  <p className="text-sm text-gray-400 mb-6">
-                    Pay ₹1 to download document
+                  <p className="text-sm text-gray-400 mb-4">
+                    Pay ₹1 to download
                   </p>
 
                   <button
                     onClick={handlePayment}
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg cursor-pointer"
+                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-lg font-semibold"
                   >
                     Pay ₹1 & Download
                   </button>
@@ -199,7 +188,7 @@ export default function RentAgreementPage() {
 
             </div>
           ) : (
-            <div className="flex items-center justify-center flex-1 text-gray-500 text-sm">
+            <div className="flex items-center justify-center h-full text-gray-500">
               Generate agreement to preview
             </div>
           )}
