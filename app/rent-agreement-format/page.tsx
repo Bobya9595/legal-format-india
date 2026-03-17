@@ -15,7 +15,18 @@ export default function RentAgreementPage() {
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* GENERATE AGREEMENT */
+  // 🔥 LOAD RAZORPAY SCRIPT
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // ✅ GENERATE AGREEMENT
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -37,37 +48,51 @@ export default function RentAgreementPage() {
     setLoading(false);
   };
 
-  /* FINAL PAYMENT HANDLER (FIXED) */
+  // 💰 FINAL PAYMENT FUNCTION
   const handlePayment = async () => {
     if (!auth.currentUser) {
       router.push("/login");
       return;
     }
 
-    try {
-      const res = await fetch("/api/create-checkout-session", {
-        method: "POST",
-      });
+    const loaded = await loadRazorpay();
 
-      const text = await res.text(); // 👈 critical fix
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        alert(text); // shows real backend error
-        return;
-      }
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || "Payment failed");
-      }
-
-    } catch (err) {
-      alert("Something went wrong");
+    if (!loaded) {
+      alert("Razorpay SDK failed to load");
+      return;
     }
+
+    const res = await fetch("/api/create-order", {
+      method: "POST",
+    });
+
+    const order = await res.json();
+
+    if (!order.id) {
+      alert("Order creation failed");
+      return;
+    }
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "LegalFormat",
+      description: "Download Agreement",
+      order_id: order.id,
+
+      handler: function (response: any) {
+        alert("Payment Successful 🎉");
+        window.location.href = "/success";
+      },
+
+      theme: {
+        color: "#7c3aed",
+      },
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   };
 
   return (
@@ -108,7 +133,7 @@ export default function RentAgreementPage() {
             />
 
             <textarea
-              placeholder="Optional rules"
+              placeholder="Optional rules (no pets, 11 month agreement)"
               className="p-3 rounded bg-gray-800 border border-gray-700 h-24"
               onChange={(e) => setRules(e.target.value)}
             />
