@@ -1,11 +1,11 @@
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export async function POST() {
   try {
+    // ✅ SAFE INIT
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       mode: "payment",
 
       line_items: [
@@ -13,9 +13,9 @@ export async function POST() {
           price_data: {
             currency: "inr",
             product_data: {
-              name: "Legal Agreement Download",
+              name: "Legal Agreement",
             },
-            unit_amount: 1000, // ₹10
+            unit_amount: 1000,
           },
           quantity: 1,
         },
@@ -28,7 +28,11 @@ export async function POST() {
     return Response.json({ url: session.url });
 
   } catch (error: any) {
-    console.error("Stripe Error:", error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error("STRIPE FULL ERROR:", error);
+
+    return Response.json(
+      { error: error.message },
+      { status: 500 }
+    );
   }
 }
