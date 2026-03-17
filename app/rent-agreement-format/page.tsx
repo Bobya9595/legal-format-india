@@ -14,7 +14,7 @@ export default function RentAgreementPage() {
   const [agreement, setAgreement] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔥 Load Razorpay
+  // Razorpay loader
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -25,7 +25,7 @@ export default function RentAgreementPage() {
     });
   };
 
-  // ✅ Generate Agreement
+  // Generate Agreement
   const generateAgreement = async () => {
     setLoading(true);
 
@@ -42,7 +42,7 @@ export default function RentAgreementPage() {
 
       setAgreement(data.document);
 
-      // SAVE FOR DOWNLOAD
+      // Save for download
       localStorage.setItem("agreement", data.document);
 
     } catch {
@@ -52,7 +52,7 @@ export default function RentAgreementPage() {
     setLoading(false);
   };
 
-  // 💰 Payment
+  // Payment
   const handlePayment = async () => {
     if (!auth.currentUser) {
       router.push("/login");
@@ -144,7 +144,7 @@ export default function RentAgreementPage() {
 
             <button
               onClick={generateAgreement}
-              className="bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition"
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg"
             >
               {loading ? "Generating..." : "Generate Agreement"}
             </button>
@@ -153,43 +153,46 @@ export default function RentAgreementPage() {
         </div>
 
         {/* RIGHT PREVIEW */}
-        <div className="relative bg-[#0f172a] text-white rounded-2xl shadow-2xl border border-white/10 h-[520px] flex flex-col">
+        <div className="bg-[#0b1220] border border-white/10 rounded-2xl shadow-xl h-[600px] flex flex-col overflow-hidden">
 
           {/* HEADER */}
-          <div className="p-4 border-b border-white/10">
-            <h2 className="text-sm text-gray-300">
-              Agreement Preview
-            </h2>
+          <div className="px-5 py-3 border-b border-white/10 text-sm text-gray-400">
+            Agreement Preview
           </div>
 
           {agreement ? (
-            <div className="relative flex-1">
+            <div className="relative flex-1 flex items-center justify-center">
 
-              {/* SCROLLABLE PREVIEW */}
-              <div className="p-6 h-full overflow-y-auto blur-sm">
+              {/* SCROLL AREA */}
+              <div className="w-full h-full overflow-y-auto flex justify-center p-6">
 
-                <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-200">
-                  {agreement}
-                </pre>
+                {/* DOCUMENT CARD */}
+                <div className="w-[520px] min-h-full bg-white text-black rounded-lg shadow-2xl p-8 leading-relaxed text-sm">
+
+                  <pre className="whitespace-pre-wrap font-serif">
+                    {agreement}
+                  </pre>
+
+                </div>
 
               </div>
 
               {/* PAYWALL */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
 
-                <div className="bg-gradient-to-br from-[#1e293b] to-[#020617] border border-white/10 p-8 rounded-2xl text-center shadow-xl w-[320px]">
+                <div className="bg-[#0f172a] border border-white/10 p-8 rounded-2xl text-center shadow-xl w-[320px]">
 
-                  <p className="mb-2 text-lg font-semibold">
+                  <p className="text-lg font-semibold mb-2">
                     Unlock full agreement
                   </p>
 
-                  <p className="mb-6 text-sm text-gray-400">
-                    Pay ₹1 to download full document
+                  <p className="text-sm text-gray-400 mb-6">
+                    Pay ₹1 to download document
                   </p>
 
                   <button
                     onClick={handlePayment}
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition"
+                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg"
                   >
                     Pay ₹1 & Download
                   </button>
@@ -208,6 +211,7 @@ export default function RentAgreementPage() {
         </div>
 
       </div>
+
     </main>
   );
 }
